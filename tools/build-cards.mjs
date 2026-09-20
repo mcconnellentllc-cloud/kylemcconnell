@@ -56,7 +56,7 @@ function card(site, level, pad) {
   const linkable = site.linkable !== false && site.url;
   lines.push(
     linkable
-      ? `${pad}    <h${level}><a href="${esc(site.url)}" rel="noopener">${esc(site.name)}</a></h${level}>`
+      ? `${pad}    <h${level}><a href="${esc(site.url)}" target="_blank" rel="noopener" aria-label="${esc(site.name)} (opens in a new tab)">${esc(site.name)}</a></h${level}>`
       : `${pad}    <h${level}>${esc(site.name)}</h${level}>`
   );
 
@@ -88,7 +88,7 @@ function card(site, level, pad) {
 function indexRow(site, pad) {
   const linkable = site.linkable !== false && site.url;
   const name = linkable
-    ? `<a href="${esc(site.url)}" rel="noopener">${esc(site.name)}</a>`
+    ? `<a href="${esc(site.url)}" target="_blank" rel="noopener" aria-label="${esc(site.name)} (opens in a new tab)">${esc(site.name)}</a>`
     : `<span class="index-name">${esc(site.name)}</span>`;
   const badge = STATUS_LABEL[site.status]
     ? ` <span class="index-badge">${esc(STATUS_LABEL[site.status])}</span>`
