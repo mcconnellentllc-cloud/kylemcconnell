@@ -20,7 +20,7 @@
       "name": "YourAgInfo",
       "url": "https://youraginfo.com",
       "category": "My businesses",
-      "description": "Agricultural resources for McConnell Enterprises customers — crop planning, farm programs, and seed information.",
+      "description": "Our public Pioneer site — seed information, crop planning, and farm program resources for our customers.",
       "built": true,
       "stack": [
         "HTML",
@@ -35,12 +35,13 @@
       "name": "ToGoAG",
       "url": "https://togoag.com",
       "category": "My businesses",
+      "description": "Our ag retail business.",
       "built": true,
-      "status": "live",
-      "linkable": true,
       "stack": [
         "Square"
-      ]
+      ],
+      "status": "live",
+      "linkable": true
     },
     {
       "id": "acreprofit",
@@ -117,7 +118,7 @@
       "id": "internal-pioneer",
       "name": "Pioneer Analytics Dashboard",
       "category": "My businesses",
-      "description": "Internal dashboard tracking grower sales, product performance, and multi-year forecasting.",
+      "description": "My own analytics: grower sales, product performance, and multi-year forecasting.",
       "built": true,
       "stack": [
         "JavaScript"
