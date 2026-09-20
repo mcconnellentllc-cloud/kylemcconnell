@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Kyle McConnell">
-  <rect width="64" height="64" rx="12" fill="#8c3f15"/>
-  <path d="M20 14h7v15.5L41.5 14H51L36.6 29.9 51.5 50H42L31 34.6 27 39v11h-7z" fill="#fffdf8"/>
-  <rect x="14" y="54" width="36" height="3" rx="1.5" fill="#fffdf8" opacity="0.6"/>
+  <rect width="64" height="64" rx="6" fill="#14110f"/>
+  <path d="M20 13h7v16.5L42 13h9.5L36.6 29.6 52 51h-9.8L31 34.8 27 39.2V51h-7z" fill="#f7a800"/>
+  <rect x="13" y="54" width="38" height="3.5" fill="#9c161c"/>
 </svg>

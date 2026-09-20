@@ -13,7 +13,7 @@
  */
 import { readFileSync, writeFileSync } from "node:fs";
 
-const CATEGORY_ORDER = ["My businesses", "Sites I've built for others", "Family sites", "Personal sites"];
+const CATEGORY_ORDER = ["My businesses", "Sites I've built for others", "Sports programs", "Family sites", "Personal sites"];
 const STATUS_LABEL = { "coming-soon": "Coming soon", seasonal: "Seasonal", private: "Sign-in required" };
 const INDENT = "    ";
 
@@ -85,15 +85,28 @@ function card(site, level, pad) {
   return lines.join("\n");
 }
 
-function groupedCards() {
+function indexRow(site, pad) {
+  const linkable = site.linkable !== false && site.url;
+  const name = linkable
+    ? `<a href="${esc(site.url)}" rel="noopener">${esc(site.name)}</a>`
+    : `<span class="index-name">${esc(site.name)}</span>`;
+  const badge = STATUS_LABEL[site.status]
+    ? ` <span class="index-badge">${esc(STATUS_LABEL[site.status])}</span>`
+    : "";
+  const note = linkable ? esc(host(site.url)) : "No public link";
+  const desc = site.description ? `<span class="index-desc">${esc(site.description)}</span>` : "";
+  return `${pad}<li>\n${pad}  <span class="index-head">${name}${badge}</span>\n${pad}  ${desc}\n${pad}  <span class="index-host">${note}</span>\n${pad}</li>`;
+}
+
+function groupedIndex() {
   const out = [];
   for (const category of CATEGORY_ORDER) {
     const group = sites.filter((site) => site.category === category).sort(byName);
     if (!group.length) continue;
     const id = category.toLowerCase().replace(/[^a-z]+/g, "-");
     out.push(`${INDENT}<h3 class="group-title" id="group-${id}">${esc(category)}</h3>`);
-    out.push(`${INDENT}<ul class="card-grid">`);
-    for (const site of group) out.push(card(site, 4, `${INDENT}  `));
+    out.push(`${INDENT}<ul class="index-list">`);
+    for (const site of group) out.push(indexRow(site, `${INDENT}  `));
     out.push(`${INDENT}</ul>`);
   }
   return out.join("\n");
@@ -120,7 +133,7 @@ function replaceBlock(html, name, body) {
 }
 
 let html = readFileSync("index.html", "utf8");
-html = replaceBlock(html, "CARDS", groupedCards());
+html = replaceBlock(html, "CARDS", groupedIndex());
 html = replaceBlock(html, "BUILT", builtCards());
 writeFileSync("index.html", html);
 
