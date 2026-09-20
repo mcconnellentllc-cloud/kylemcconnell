@@ -107,7 +107,9 @@ renders locally, it renders in production.
 
 Two files in the repo root support this:
 
-- `CNAME` — the custom domain Pages serves. Changing the domain means changing this file.
+- `CNAME` — the custom domain Pages serves, currently `kylemcconnell.com`. This file
+  *is* the custom-domain setting: every push overwrites whatever the Pages screen shows,
+  so change the domain here, not only in the web UI.
 - `.nojekyll` — stops Pages running the files through Jekyll. Nothing here needs it.
 
 **Render is the alternative host** if Pages is ever a problem: New > Static Site >
@@ -132,11 +134,11 @@ screen tells you to add. At the time of writing that is:
 
 | Type | Host | Value | TTL |
 |---|---|---|---|
-| CNAME | `www` | `mcconnellentllc-cloud.github.io` | 1 hour |
 | A | `@` | the four apex IPs GitHub lists on the Pages settings screen | 1 hour |
+| CNAME | `www` | `mcconnellentllc-cloud.github.io` | 1 hour |
 
-The apex `A` records are only needed so `kylemcconnell.com` redirects to the `www`
-address in `CNAME`. **Use the values the Pages screen shows — do not use values from
+`kylemcconnell.com` is canonical, which is what the `CNAME` file in the repo root says.
+The `www` record exists only so `www.kylemcconnell.com` redirects to the apex. **Use the values the Pages screen shows — do not use values from
 memory.** For Render, use the IP and `*.onrender.com` hostname shown under Settings >
 Custom Domains instead.
 
