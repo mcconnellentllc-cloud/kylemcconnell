@@ -121,7 +121,7 @@
     {
       "id": "internal-pioneer",
       "name": "Pioneer Analytics Dashboard",
-      "category": "My businesses",
+      "category": "Personal sites",
       "description": "My own analytics: grower sales, product performance, and multi-year forecasting.",
       "built": true,
       "stack": [
