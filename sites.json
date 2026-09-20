@@ -121,6 +121,7 @@
     {
       "id": "internal-pioneer",
       "name": "Pioneer Analytics Dashboard",
+      "url": "https://mcconnellentllc-cloud.github.io/Internal-Pioneer/",
       "category": "Personal sites",
       "description": "My own analytics: grower sales, product performance, and multi-year forecasting.",
       "built": true,
@@ -128,7 +129,7 @@
         "JavaScript"
       ],
       "status": "live",
-      "linkable": false
+      "linkable": true
     },
     {
       "id": "family-sports",
