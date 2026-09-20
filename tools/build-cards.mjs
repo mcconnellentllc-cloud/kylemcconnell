@@ -50,7 +50,7 @@ for (const site of sites) {
 
 const byName = (a, b) => a.name.localeCompare(b.name);
 
-function card(site, level, pad) {
+function card(site, level, pad, showCategory = false) {
   const lines = [];
   lines.push(`${pad}<li class="card">`);
 
@@ -61,6 +61,10 @@ function card(site, level, pad) {
   }
 
   lines.push(`${pad}  <div class="card-body">`);
+
+  if (showCategory) {
+    lines.push(`${pad}    <p class="card-category">${esc(NAV_LABEL[site.category] || site.category)}</p>`);
+  }
 
   const linkable = site.linkable !== false && site.url;
   lines.push(
@@ -139,7 +143,7 @@ function builtCards() {
   const built = sites.filter((site) => site.built === true).sort(byName);
   if (!built.length) return "";
   const out = [`${INDENT}<ul class="card-grid">`];
-  for (const site of built) out.push(card(site, 3, `${INDENT}  `));
+  for (const site of built) out.push(card(site, 3, `${INDENT}  `, true));
   out.push(`${INDENT}</ul>`);
   return out.join("\n");
 }
