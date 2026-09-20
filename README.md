@@ -40,7 +40,7 @@ Add one object to the `sites` array in `sites.json`:
 | Field | Meaning |
 |---|---|
 | `id` | lowercase slug; also the screenshot filename (`img/<id>.webp`) |
-| `category` | Who the site is for: `My businesses`, `Sites I've built for others`, `Sports programs`, `Family sites`, or `Personal sites`. One per site, no overlap. Filter buttons appear only for categories in use. Civic roles are never a category — they are plain text in their own section. |
+| `category` | Who the site is for: `My businesses`, `Sites I've built for others`, `Sports programs`, `Family sites`, or `Personal sites`. Pass an array to list a site under more than one section (the softball site is both Family and Sports). Filter buttons appear only for categories in use. Civic roles are never a category — they are plain text in their own section. |
 | `built` | `true` = Kyle built it, so it also appears under "Things I've built". `false` = directory listing only. |
 | `stack` | tech tags; omit or leave `[]` if not applicable |
 | `status` | `live`, `coming-soon`, `seasonal`, or `private` (password or sign-in required). Anything other than `live` shows a badge on the card. |

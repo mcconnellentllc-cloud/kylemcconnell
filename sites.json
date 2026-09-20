@@ -76,7 +76,10 @@
       "id": "haxtun-softball",
       "name": "Haxtun Bulldogs Softball",
       "url": "https://mcconnellentllc-cloud.github.io/haxtun-softball9-12/",
-      "category": "Family sites",
+      "category": [
+        "Family sites",
+        "Sports programs"
+      ],
       "description": "Schedule, roster, rules, and updates for the Haxtun Bulldogs 9-12 girls softball team.",
       "built": true,
       "stack": [
@@ -103,6 +106,7 @@
     {
       "id": "duck-race",
       "name": "Jason Toyne Memorial Duck Race",
+      "url": "https://duck-race.vercel.app",
       "category": "Sites I've built for others",
       "description": "Online entry and results for the Jason Toyne Memorial duck race.",
       "built": true,
@@ -112,7 +116,7 @@
         "MongoDB"
       ],
       "status": "seasonal",
-      "linkable": false
+      "linkable": true
     },
     {
       "id": "internal-pioneer",
@@ -130,7 +134,10 @@
       "id": "family-sports",
       "name": "McConnell Family Sports",
       "url": "https://mcconnellentllc-cloud.github.io/McConnellFamilySports/",
-      "category": "Family sites",
+      "category": [
+        "Family sites",
+        "Sports programs"
+      ],
       "description": "Password-protected archive of the McConnell girls' sports — scores, pictures, places, and memories.",
       "built": true,
       "stack": [
@@ -158,7 +165,10 @@
     {
       "id": "titans",
       "name": "Tennessee Titans Bible",
-      "category": "Personal sites",
+      "category": [
+        "Personal sites",
+        "Sports programs"
+      ],
       "description": "A personal collection: rosters, schedules, team history, and game-day trip planning.",
       "built": true,
       "stack": [
