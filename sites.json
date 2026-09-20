@@ -196,6 +196,16 @@
       ],
       "status": "private",
       "linkable": true
+    },
+    {
+      "id": "suno",
+      "name": "Music on Suno",
+      "url": "https://suno.com/@broosetucker",
+      "category": "Personal",
+      "description": "Songs I have written, published on Suno as broosetucker.",
+      "built": false,
+      "status": "live",
+      "linkable": true
     }
   ]
 }
