@@ -134,10 +134,7 @@
       "id": "family-sports",
       "name": "McConnell Family Sports",
       "url": "https://mcconnellentllc-cloud.github.io/McConnellFamilySports/",
-      "category": [
-        "Family sites",
-        "Sports programs"
-      ],
+      "category": "Family sites",
       "description": "Password-protected archive of the McConnell girls' sports — scores, pictures, places, and memories.",
       "built": true,
       "stack": [
