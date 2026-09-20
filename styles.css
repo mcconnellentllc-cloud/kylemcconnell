@@ -169,6 +169,78 @@ a { color: inherit; }
   color: var(--muted);
 }
 
+.bio {
+  margin-top: 1.5rem;
+  max-width: 58ch;
+}
+
+.bio p {
+  margin: 0 0 0.875rem;
+  font-size: 1.0625rem;
+}
+.bio p:last-child { margin-bottom: 0; }
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.75rem 0 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.75rem 1.5rem;
+  background: var(--accent);
+  color: var(--accent-text);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-weight: 600;
+  text-decoration: none;
+}
+.btn:hover { filter: brightness(0.94); }
+
+.btn-quiet {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+.btn-quiet:hover { border-color: var(--accent); filter: none; }
+
+/* ---------- Header ---------- */
+
+.site-header {
+  border-bottom: 1px solid var(--border);
+  background:
+    linear-gradient(to bottom, var(--surface-2), var(--bg));
+  padding-block: clamp(2.5rem, 8vw, 4.5rem) clamp(2rem, 6vw, 3.25rem);
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.8125rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.site-header h1 {
+  margin: 0;
+  font-size: clamp(2.25rem, 9vw, 3.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+.lede {
+  margin: 1rem 0 0;
+  max-width: 44ch;
+  font-size: clamp(1.0625rem, 3.4vw, 1.25rem);
+  color: var(--muted);
+}
+
 .header-actions {
   display: flex;
   flex-wrap: wrap;
@@ -417,6 +489,35 @@ h2 {
   border-radius: 6px;
   border: 1px solid var(--accent);
   color: var(--accent);
+}
+
+/* ---------- What I do ---------- */
+
+.work-list {
+  list-style: none;
+  margin: 1.75rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 40rem) {
+  .work-list { grid-template-columns: repeat(2, 1fr); gap: 1.75rem 2.5rem; }
+}
+
+.work-list h3 {
+  margin: 0 0 0.375rem;
+  font-size: 1.0625rem;
+  letter-spacing: 0.02em;
+  padding-left: 0.875rem;
+  border-left: 4px solid var(--accent);
+}
+
+.work-list p {
+  margin: 0;
+  color: var(--muted);
+  max-width: 46ch;
 }
 
 /* ---------- Civic ---------- */

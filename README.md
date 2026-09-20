@@ -122,3 +122,20 @@ never values from memory):
 **Do not touch** existing MX, TXT, autodiscover, or SRV records — those run Microsoft
 365 email. **Do not** click "Set as default" on the domain in M365; that changes the
 default domain for the whole McConnell Enterprises tenant.
+
+## Keeping this site alive
+
+The site is plain HTML, CSS, and one small JavaScript file. There is no framework,
+no build step, no package to update, and no server-side code. Left completely alone
+it will keep rendering correctly in any browser for as long as the two things below
+are paid for:
+
+1. **The domain** — `kylemcconnell.com`, registered through the Microsoft 365 admin
+   center on the McConnell Enterprises tenant, auto-renew on. If that lapses, the
+   address stops resolving and the site is unreachable even though the files are fine.
+2. **The host** — a Render Static Site pointed at this repo. If Render goes away or
+   the account closes, copy these files to any static host (GitHub Pages works) and
+   repoint the DNS records. Nothing in the code is Render-specific.
+
+If both lapse, the site goes dark but is not lost: this repository is the whole site.
+Anyone with these files and a domain can put it back up in an afternoon.
