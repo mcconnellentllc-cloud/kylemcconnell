@@ -40,7 +40,7 @@ Add one object to the `sites` array in `sites.json`:
 | Field | Meaning |
 |---|---|
 | `id` | lowercase slug; also the screenshot filename (`img/<id>.webp`) |
-| `category` | Who the site is for: `My businesses`, `Built for others`, `Tools`, `Family`, or `Personal`. One per site, no overlap. Filter buttons appear only for categories in use. Civic roles are never a category — they are plain text in their own section. |
+| `category` | Who the site is for: `My businesses`, `Sites I've built for others`, `Family sites`, or `Personal sites`. One per site, no overlap. Filter buttons appear only for categories in use. Civic roles are never a category — they are plain text in their own section. |
 | `built` | `true` = Kyle built it, so it also appears under "Things I've built". `false` = directory listing only. |
 | `stack` | tech tags; omit or leave `[]` if not applicable |
 | `status` | `live`, `coming-soon`, `seasonal`, or `private` (password or sign-in required). Anything other than `live` shows a badge on the card. |
@@ -61,8 +61,8 @@ Nothing about this is a deploy step: Render serves the committed files exactly a
 are. If you would rather edit the card markup in `index.html` by hand, that works too —
 just keep `sites.json` in step, or the next run of the script will overwrite your edits.
 
-Card order is fixed by category (My businesses, Built for others, Tools, Family,
-Personal), then alphabetically — customer-facing sites come first without any manual
+Card order is fixed by category (My businesses, Sites I've built for others, Family
+sites, Personal sites), then alphabetically — customer-facing sites come first without any manual
 ordering. Each category becomes a plain heading above its own row of cards — there are
 no filter buttons and nothing to click but the links themselves.
 

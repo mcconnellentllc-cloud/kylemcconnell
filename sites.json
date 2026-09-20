@@ -60,7 +60,7 @@
       "id": "fandhgolf",
       "name": "F&H Golf Course",
       "url": "https://fandhgolf.com",
-      "category": "Built for others",
+      "category": "Sites I've built for others",
       "description": "Public 9-hole course between Fleming and Haxtun — par 36, 3,261 yards, established 1972.",
       "built": true,
       "stack": [
@@ -75,7 +75,7 @@
       "id": "haxtun-softball",
       "name": "Haxtun Bulldogs Softball",
       "url": "https://mcconnellentllc-cloud.github.io/haxtun-softball9-12/",
-      "category": "Built for others",
+      "category": "Sites I've built for others",
       "description": "Schedule, roster, rules, and updates for the Haxtun Bulldogs 9-12 girls softball team.",
       "built": true,
       "stack": [
@@ -88,7 +88,7 @@
       "id": "cologrowers",
       "name": "Colorado Corn Growers Association",
       "url": "https://www.cologrowers.com",
-      "category": "Built for others",
+      "category": "Sites I've built for others",
       "description": "Website for the Growers Association of Colorado Corn.",
       "built": true,
       "stack": [
@@ -102,7 +102,7 @@
     {
       "id": "duck-race",
       "name": "Jason Toyne Memorial Duck Race",
-      "category": "Built for others",
+      "category": "Sites I've built for others",
       "description": "Online entry and results for the Jason Toyne Memorial duck race.",
       "built": true,
       "stack": [
@@ -116,7 +116,7 @@
     {
       "id": "internal-pioneer",
       "name": "Pioneer Analytics Dashboard",
-      "category": "Tools",
+      "category": "My businesses",
       "description": "Internal dashboard tracking grower sales, product performance, and multi-year forecasting.",
       "built": true,
       "stack": [
@@ -129,7 +129,7 @@
       "id": "family-sports",
       "name": "McConnell Family Sports",
       "url": "https://mcconnellentllc-cloud.github.io/McConnellFamilySports/",
-      "category": "Family",
+      "category": "Family sites",
       "description": "Password-protected archive of the McConnell girls' sports — scores, pictures, places, and memories.",
       "built": true,
       "stack": [
@@ -144,7 +144,7 @@
       "id": "flames-of-fury",
       "name": "Flames of Fury — The Logan Fire",
       "url": "https://www.flamesoffury.com",
-      "category": "Personal",
+      "category": "Personal sites",
       "description": "The Logan Fire of March 6, 2017, and the book about it.",
       "built": true,
       "stack": [
@@ -157,7 +157,7 @@
     {
       "id": "titans",
       "name": "Tennessee Titans Bible",
-      "category": "Personal",
+      "category": "Personal sites",
       "description": "A personal collection: rosters, schedules, team history, and game-day trip planning.",
       "built": true,
       "stack": [
@@ -171,7 +171,7 @@
     {
       "id": "rvtimes",
       "name": "Monaco Diplomat Field Guide",
-      "category": "Personal",
+      "category": "Personal sites",
       "description": "Reference guide for the Monaco Diplomat motorhome.",
       "built": true,
       "stack": [
@@ -185,7 +185,7 @@
       "id": "stc-fsa",
       "name": "STC Colorado — FSA State Technical Committee",
       "url": "https://stc-state-fsa.onrender.com",
-      "category": "Tools",
+      "category": "Sites I've built for others",
       "description": "Meeting management, document intake, and appeal-analysis support for the Colorado FSA State Technical Committee.",
       "built": true,
       "stack": [
@@ -201,7 +201,7 @@
       "id": "suno",
       "name": "Music on Suno",
       "url": "https://suno.com/@broosetucker",
-      "category": "Personal",
+      "category": "Personal sites",
       "description": "Songs I have written, published on Suno as broosetucker.",
       "built": false,
       "status": "live",

@@ -13,7 +13,7 @@
  */
 import { readFileSync, writeFileSync } from "node:fs";
 
-const CATEGORY_ORDER = ["My businesses", "Built for others", "Tools", "Family", "Personal"];
+const CATEGORY_ORDER = ["My businesses", "Sites I've built for others", "Family sites", "Personal sites"];
 const STATUS_LABEL = { "coming-soon": "Coming soon", seasonal: "Seasonal", private: "Sign-in required" };
 const INDENT = "    ";
 
