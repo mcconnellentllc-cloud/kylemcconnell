@@ -9,8 +9,9 @@ runtime behavior — plain HTML and CSS. The cards are written into `index.html`
 script generates them from `sites.json` so adding a site stays a one-object edit.
 
 ```
-index.html        page markup, SEO tags, JSON-LD
-styles.css        all styles (light + dark via prefers-color-scheme)
+index.html        home page: bio, timeline, what Kyle does, portfolio cards
+sites/index.html  full index: every site, grouped, one line each
+styles.css        all styles, shared by both pages (light + dark)
 sites.json        single source of truth for every site listed
 img/              screenshots (WebP), Open Graph image, touch icon
 favicon.svg       site icon
@@ -52,9 +53,11 @@ Then regenerate the cards in `index.html`:
 node tools/build-cards.mjs
 ```
 
-That rewrites the two generated blocks in `index.html` — `CARDS` (the grouped list of
-every site) and `BUILT` (the portfolio) — and leaves the rest of the file alone. Run it
-any time `sites.json` changes, and commit both files. It refuses to run on an entry
+That rewrites the generated blocks in both pages and leaves the rest of each file
+alone: `BUILT` (the portfolio cards) and `NAV` in `index.html`, `CARDS` (the grouped
+list) and `NAV` in `sites/index.html`. The home page's tabs point at `/sites/#group-…`
+so they cross over to the index page; the index page's tabs are local anchors. Run it
+any time `sites.json` changes, and commit every file it touches. It refuses to run on an entry
 missing `id`, `name`, or `category`, or using a category outside the list below.
 
 Nothing about this is a deploy step: Render serves the committed files exactly as they

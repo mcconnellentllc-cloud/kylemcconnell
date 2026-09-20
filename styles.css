@@ -275,6 +275,21 @@ a:hover { color: var(--crimson-strong); }
 }
 .btn-quiet:hover { background: transparent; color: var(--text); border-color: var(--accent); }
 
+.page-header .eyebrow a {
+  color: var(--muted);
+  text-decoration: none;
+}
+.page-header .eyebrow a:hover { color: var(--crimson); text-decoration: underline; text-underline-offset: 3px; }
+
+@media (prefers-color-scheme: dark) {
+  .page-header .eyebrow a:hover { color: var(--gold); }
+}
+
+.page-header .lede { font-style: normal; color: var(--muted); font-family: var(--sans); font-size: 1.0625rem; max-width: 52ch; }
+
+.site-footer p { margin: 0 0 0.375rem; }
+.site-footer p:last-child { margin-bottom: 0; }
+
 /* ---------- Sections ---------- */
 
 main > section {

@@ -116,12 +116,12 @@ function categoryId(category) {
   return category.toLowerCase().replace(/[^a-z]+/g, "-");
 }
 
-function navTabs() {
+function navTabs(prefix = "") {
   const out = [];
   for (const category of CATEGORY_ORDER) {
     if (!sites.some((site) => site.category === category)) continue;
     const label = NAV_LABEL[category] || category;
-    out.push(`      <li><a href="#group-${categoryId(category)}">${esc(label)}</a></li>`);
+    out.push(`      <li><a href="${prefix}#group-${categoryId(category)}">${esc(label)}</a></li>`);
   }
   return out.join("\n");
 }
@@ -160,10 +160,19 @@ function replaceBlock(html, name, body, indent = INDENT) {
   return html.slice(0, startEnd) + (body ? `\n${body}\n${indent}` : "\n" + indent) + html.slice(end);
 }
 
-let html = readFileSync("index.html", "utf8");
-html = replaceBlock(html, "NAV", navTabs(), "    ");
-html = replaceBlock(html, "CARDS", groupedIndex());
-html = replaceBlock(html, "BUILT", builtCards());
-writeFileSync("index.html", html);
+// Home page: portfolio cards, and tabs that cross over to the index page.
+let home = readFileSync("index.html", "utf8");
+home = replaceBlock(home, "NAV", navTabs("/sites/"), "    ");
+home = replaceBlock(home, "BUILT", builtCards());
+writeFileSync("index.html", home);
 
-console.log(`Wrote ${sites.length} site card(s); ${sites.filter((s) => s.built).length} in the portfolio.`);
+// Index page: the grouped list of every site, with tabs to its own sections.
+let index = readFileSync("sites/index.html", "utf8");
+index = replaceBlock(index, "NAV", navTabs(), "    ");
+index = replaceBlock(index, "CARDS", groupedIndex());
+writeFileSync("sites/index.html", index);
+
+console.log(
+  `index.html: ${sites.filter((s) => s.built).length} portfolio card(s). ` +
+    `sites/index.html: ${sites.length} listed.`
+);
