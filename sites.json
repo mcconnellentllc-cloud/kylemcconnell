@@ -1,3 +1,141 @@
 {
-  "sites": []
+  "sites": [
+    {
+      "id": "m77ag",
+      "name": "M77 AG",
+      "url": "https://m77ag.com",
+      "category": "My businesses",
+      "description": "Custom farming, hunting leases, and land management for a four-generation operation in northeast Colorado.",
+      "built": true,
+      "stack": ["Node", "Express", "MongoDB"],
+      "status": "live",
+      "linkable": true
+    },
+    {
+      "id": "youraginfo",
+      "name": "YourAgInfo",
+      "url": "https://youraginfo.com",
+      "category": "My businesses",
+      "description": "Agricultural resources for McConnell Enterprises customers — crop planning, farm programs, and seed information.",
+      "built": true,
+      "stack": ["HTML", "CSS", "JavaScript"],
+      "status": "live",
+      "linkable": true
+    },
+    {
+      "id": "togoag",
+      "name": "ToGoAG",
+      "url": "https://togoag.com",
+      "category": "My businesses",
+      "built": false,
+      "status": "live",
+      "linkable": true
+    },
+    {
+      "id": "acreprofit",
+      "name": "Acre Profit",
+      "url": "https://acreprofit.com",
+      "category": "My businesses",
+      "description": "Farmers helping farmers — a bulk buying co-op for farm chemistry and products.",
+      "built": true,
+      "stack": ["Node", "Express"],
+      "status": "coming-soon",
+      "linkable": true
+    },
+    {
+      "id": "fandhgolf",
+      "name": "F&H Golf Course",
+      "url": "https://fandhgolf.com",
+      "category": "Built for others",
+      "description": "Public 9-hole course between Fleming and Haxtun — par 36, 3,261 yards, established 1972.",
+      "built": true,
+      "stack": ["HTML", "CSS", "JavaScript"],
+      "status": "live",
+      "linkable": true
+    },
+    {
+      "id": "haxtun-softball",
+      "name": "Haxtun Bulldogs Softball",
+      "url": "https://mcconnellentllc-cloud.github.io/haxtun-softball9-12/",
+      "category": "Built for others",
+      "description": "Schedule, roster, rules, and updates for the Haxtun Bulldogs 9-12 girls softball team.",
+      "built": true,
+      "stack": ["Jekyll"],
+      "status": "live",
+      "linkable": true
+    },
+    {
+      "id": "cologrowers",
+      "name": "Colorado Corn Growers Association",
+      "url": "https://www.cologrowers.com",
+      "category": "Built for others",
+      "description": "Website for the Growers Association of Colorado Corn.",
+      "built": true,
+      "stack": ["HTML", "CSS", "JavaScript"],
+      "status": "live",
+      "linkable": true
+    },
+    {
+      "id": "duck-race",
+      "name": "Jason Toyne Memorial Duck Race",
+      "category": "Built for others",
+      "description": "Online entry and results for the Jason Toyne Memorial duck race.",
+      "built": true,
+      "stack": ["Next.js", "React", "MongoDB"],
+      "status": "seasonal",
+      "linkable": false
+    },
+    {
+      "id": "internal-pioneer",
+      "name": "Pioneer Analytics Dashboard",
+      "category": "Tools",
+      "description": "Internal dashboard tracking grower sales, product performance, and multi-year forecasting.",
+      "built": true,
+      "stack": ["JavaScript"],
+      "status": "live",
+      "linkable": false
+    },
+    {
+      "id": "family-sports",
+      "name": "McConnell Family Sports",
+      "url": "https://mcconnellentllc-cloud.github.io/McConnellFamilySports/",
+      "category": "Family",
+      "description": "Password-protected archive of the McConnell girls' sports — scores, pictures, places, and memories.",
+      "built": true,
+      "stack": ["HTML", "JavaScript", "Python"],
+      "status": "live",
+      "linkable": true
+    },
+    {
+      "id": "flames-of-fury",
+      "name": "Flames of Fury — The Logan Fire",
+      "url": "https://www.flamesoffury.com",
+      "category": "Personal",
+      "description": "The Logan Fire of March 6, 2017, and the book about it.",
+      "built": true,
+      "stack": ["HTML", "CSS"],
+      "status": "live",
+      "linkable": true
+    },
+    {
+      "id": "titans",
+      "name": "Tennessee Titans Bible",
+      "category": "Personal",
+      "description": "A personal collection: rosters, schedules, team history, and game-day trip planning.",
+      "built": true,
+      "stack": ["HTML", "CSS", "JavaScript"],
+      "status": "live",
+      "linkable": false
+    },
+    {
+      "id": "rvtimes",
+      "name": "Monaco Diplomat Field Guide",
+      "category": "Personal",
+      "description": "Reference guide for the Monaco Diplomat motorhome.",
+      "built": true,
+      "stack": ["HTML", "JavaScript"],
+      "status": "live",
+      "linkable": false
+    }
+  ]
 }
