@@ -33,20 +33,15 @@ const host = (url) => url.replace(/^https?:\/\//, "").replace(/\/$/, "");
 
 const { sites = [] } = JSON.parse(readFileSync("sites.json", "utf8"));
 
-// A site may belong to more than one section: category takes a string or an array.
-const categoriesOf = (site) => (Array.isArray(site.category) ? site.category : [site.category]);
-const inCategory = (site, category) => categoriesOf(site).includes(category);
 
 for (const site of sites) {
   if (!site.id || !site.name || !site.category) {
     console.error(`Every site needs id, name and category. Bad entry: ${JSON.stringify(site)}`);
     process.exit(1);
   }
-  for (const category of categoriesOf(site)) {
-    if (!CATEGORY_ORDER.includes(category)) {
-      console.error(`Unknown category "${category}" on "${site.id}". Use one of: ${CATEGORY_ORDER.join(", ")}`);
-      process.exit(1);
-    }
+  if (!CATEGORY_ORDER.includes(site.category)) {
+    console.error(`Unknown category "${site.category}" on "${site.id}". Use one of: ${CATEGORY_ORDER.join(", ")}`);
+    process.exit(1);
   }
   if (site.linkable !== false && !site.url) {
     console.error(`"${site.id}" is linkable but has no url.`);
@@ -69,8 +64,7 @@ function card(site, level, pad, showCategory = false) {
   lines.push(`${pad}  <div class="card-body">`);
 
   if (showCategory) {
-    const labels = categoriesOf(site).map((c) => NAV_LABEL[c] || c).join(" · ");
-    lines.push(`${pad}    <p class="card-category">${esc(labels)}</p>`);
+    lines.push(`${pad}    <p class="card-category">${esc(NAV_LABEL[site.category] || site.category)}</p>`);
   }
 
   const linkable = site.linkable !== false && site.url;
@@ -125,7 +119,7 @@ function categoryId(category) {
 function navTabs() {
   const out = [];
   for (const category of CATEGORY_ORDER) {
-    if (!sites.some((site) => inCategory(site, category))) continue;
+    if (!sites.some((site) => site.category === category)) continue;
     const label = NAV_LABEL[category] || category;
     out.push(`      <li><a href="#group-${categoryId(category)}">${esc(label)}</a></li>`);
   }
@@ -135,7 +129,7 @@ function navTabs() {
 function groupedIndex() {
   const out = [];
   for (const category of CATEGORY_ORDER) {
-    const group = sites.filter((site) => inCategory(site, category)).sort(byName);
+    const group = sites.filter((site) => site.category === category).sort(byName);
     if (!group.length) continue;
     const id = categoryId(category);
     out.push(`${INDENT}<h3 class="group-title" id="group-${id}">${esc(category)}</h3>`);

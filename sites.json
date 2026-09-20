@@ -76,10 +76,7 @@
       "id": "haxtun-softball",
       "name": "Haxtun Bulldogs Softball",
       "url": "https://mcconnellentllc-cloud.github.io/haxtun-softball9-12/",
-      "category": [
-        "Family sites",
-        "Sports programs"
-      ],
+      "category": "Sports programs",
       "description": "Schedule, roster, rules, and updates for the Haxtun Bulldogs 9-12 girls softball team.",
       "built": true,
       "stack": [
@@ -163,10 +160,7 @@
       "id": "titans",
       "name": "Tennessee Titans Bible",
       "url": "https://mcconnellentllc-cloud.github.io/titans/",
-      "category": [
-        "Personal sites",
-        "Sports programs"
-      ],
+      "category": "Sports programs",
       "description": "A personal collection: rosters, schedules, team history, and game-day trip planning.",
       "built": true,
       "stack": [
