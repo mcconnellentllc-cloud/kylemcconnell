@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var CATEGORY_ORDER = ["Farm", "Business", "Community", "Civic", "Software", "Personal"];
+  var CATEGORY_ORDER = ["My businesses", "Built for others", "Tools", "Family", "Personal"];
   var STATUS_LABEL = { "coming-soon": "Coming soon", seasonal: "Seasonal" };
 
   var yearEl = document.getElementById("year");

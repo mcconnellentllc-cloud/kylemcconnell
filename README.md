@@ -24,7 +24,7 @@ Add one object to the `sites` array in `sites.json`:
   "id": "m77ag",
   "name": "M77 AG",
   "url": "https://m77ag.com",
-  "category": "Farm",
+  "category": "My businesses",
   "description": "One sentence, plain language.",
   "built": true,
   "stack": ["React", "Node", "MongoDB"],
@@ -37,7 +37,7 @@ Add one object to the `sites` array in `sites.json`:
 | Field | Meaning |
 |---|---|
 | `id` | lowercase slug; also the screenshot filename (`img/<id>.webp`) |
-| `category` | `Farm`, `Business`, `Community`, `Civic`, `Software`, or `Personal`. Filter buttons appear only for categories in use. |
+| `category` | Who the site is for: `My businesses`, `Built for others`, `Tools`, `Family`, or `Personal`. One per site, no overlap. Filter buttons appear only for categories in use. Civic roles are never a category — they are plain text in their own section. |
 | `built` | `true` = Kyle built it, so it also appears under "Things I've built". `false` = directory listing only. |
 | `stack` | tech tags; omit or leave `[]` if not applicable |
 | `status` | `live`, `coming-soon`, or `seasonal`. Non-live statuses show a badge. |
@@ -52,8 +52,13 @@ node tools/sync-noscript.mjs
 That rewrites the block between the `NOSCRIPT:START` / `NOSCRIPT:END` markers in
 `index.html`. Run it any time `sites.json` changes, and commit both files.
 
-Card order is fixed by category (Farm, Business, Community, Civic, Software, Personal),
-then alphabetically — customer-facing sites come first without any manual ordering.
+Card order is fixed by category (My businesses, Built for others, Tools, Family,
+Personal), then alphabetically — customer-facing sites come first without any manual
+ordering.
+
+Category and `built` are two different questions. Category is *who the site is for*;
+`built` is *who wrote the code*. A site can sit under "My businesses" and still appear
+in the portfolio because `built` is `true`.
 
 ## Replace a screenshot
 
