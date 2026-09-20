@@ -10,8 +10,9 @@ script generates them from `sites.json` so adding a site stays a one-object edit
 
 ```
 index.html        home page: bio, timeline, what Kyle does, portfolio cards
-sites/index.html  full index: every site, grouped, one line each
-styles.css        all styles, shared by both pages (light + dark)
+sites/index.html  all sites, grouped by section
+sites/<slug>/     one page per section, listing only that section
+styles.css        all styles, shared by every page (light + dark)
 sites.json        single source of truth for every site listed
 img/              screenshots (WebP), Open Graph image, touch icon
 favicon.svg       site icon
@@ -53,11 +54,18 @@ Then regenerate the cards in `index.html`:
 node tools/build-cards.mjs
 ```
 
-That rewrites the generated blocks in both pages and leaves the rest of each file
-alone: `BUILT` (the portfolio cards) and `NAV` in `index.html`, `CARDS` (the grouped
-list) and `NAV` in `sites/index.html`. The home page's tabs point at `/sites/#group-…`
-so they cross over to the index page; the index page's tabs are local anchors. Run it
-any time `sites.json` changes, and commit every file it touches. It refuses to run on an entry
+In `index.html` it rewrites two generated blocks and leaves the rest alone: `BUILT`
+(the portfolio cards) and `NAV` (the tab bar). Everything under `sites/` is generated
+whole — `sites/index.html` plus one folder per section — so do not hand-edit those
+files; change `sites.json` or the template in the script and re-run.
+
+**A tab is a page, not an anchor.** `/sites/family-sites/` lists the family sites and
+nothing else. That is the point: anchors on one long page meant every other section
+was still sitting there under the one you jumped to. Adding a category to `sites.json`
+creates its page and its tab; emptying one removes both. Add new pages to `sitemap.xml`
+by hand.
+
+Run it any time `sites.json` changes, and commit every file it touches. It refuses to run on an entry
 missing `id`, `name`, or `category`, or using a category outside the list below.
 
 Nothing about this is a deploy step: Render serves the committed files exactly as they

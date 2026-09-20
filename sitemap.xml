@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://kylemcconnell.com/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://kylemcconnell.com/sites/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
+  <url><loc>https://kylemcconnell.com/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://kylemcconnell.com/sites/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kylemcconnell.com/sites/my-businesses/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://kylemcconnell.com/sites/sites-i-ve-built-for-others/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://kylemcconnell.com/sites/sports-programs/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://kylemcconnell.com/sites/family-sites/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://kylemcconnell.com/sites/personal-sites/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
 </urlset>
