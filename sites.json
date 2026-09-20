@@ -179,6 +179,7 @@
     {
       "id": "rvtimes",
       "name": "Monaco Diplomat Field Guide",
+      "url": "https://mcconnellentllc-cloud.github.io/rvtimes/",
       "category": "Personal sites",
       "description": "Reference guide for the Monaco Diplomat motorhome.",
       "built": true,
@@ -187,7 +188,7 @@
         "JavaScript"
       ],
       "status": "live",
-      "linkable": false
+      "linkable": true
     },
     {
       "id": "stc-fsa",
