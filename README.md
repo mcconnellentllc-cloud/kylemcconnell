@@ -43,7 +43,7 @@ Add one object to the `sites` array in `sites.json`:
 | `category` | Who the site is for: `My businesses`, `Built for others`, `Tools`, `Family`, or `Personal`. One per site, no overlap. Filter buttons appear only for categories in use. Civic roles are never a category — they are plain text in their own section. |
 | `built` | `true` = Kyle built it, so it also appears under "Things I've built". `false` = directory listing only. |
 | `stack` | tech tags; omit or leave `[]` if not applicable |
-| `status` | `live`, `coming-soon`, or `seasonal`. Non-live statuses show a badge. |
+| `status` | `live`, `coming-soon`, `seasonal`, or `private` (password or sign-in required). Anything other than `live` shows a badge on the card. |
 | `linkable` | `false` for login-only/internal tools — the card renders with no outbound link |
 
 Then regenerate the cards in `index.html`:

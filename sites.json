@@ -53,7 +53,7 @@
         "Node",
         "Express"
       ],
-      "status": "coming-soon",
+      "status": "live",
       "linkable": true
     },
     {
@@ -137,7 +137,7 @@
         "JavaScript",
         "Python"
       ],
-      "status": "live",
+      "status": "private",
       "linkable": true
     },
     {
@@ -180,6 +180,22 @@
       ],
       "status": "live",
       "linkable": false
+    },
+    {
+      "id": "stc-fsa",
+      "name": "STC Colorado — FSA State Technical Committee",
+      "url": "https://stc-state-fsa.onrender.com",
+      "category": "Tools",
+      "description": "Meeting management, document intake, and appeal-analysis support for the Colorado FSA State Technical Committee.",
+      "built": true,
+      "stack": [
+        "React",
+        "Vite",
+        "Express",
+        "SQLite"
+      ],
+      "status": "private",
+      "linkable": true
     }
   ]
 }

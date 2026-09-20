@@ -14,7 +14,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 
 const CATEGORY_ORDER = ["My businesses", "Built for others", "Tools", "Family", "Personal"];
-const STATUS_LABEL = { "coming-soon": "Coming soon", seasonal: "Seasonal" };
+const STATUS_LABEL = { "coming-soon": "Coming soon", seasonal: "Seasonal", private: "Sign-in required" };
 const INDENT = "    ";
 
 const esc = (value) =>
