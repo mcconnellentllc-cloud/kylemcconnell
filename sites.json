@@ -7,7 +7,11 @@
       "category": "My businesses",
       "description": "Custom farming, hunting leases, and land management for a four-generation operation in northeast Colorado.",
       "built": true,
-      "stack": ["Node", "Express", "MongoDB"],
+      "stack": [
+        "Node",
+        "Express",
+        "MongoDB"
+      ],
       "status": "live",
       "linkable": true
     },
@@ -18,7 +22,11 @@
       "category": "My businesses",
       "description": "Agricultural resources for McConnell Enterprises customers — crop planning, farm programs, and seed information.",
       "built": true,
-      "stack": ["HTML", "CSS", "JavaScript"],
+      "stack": [
+        "HTML",
+        "CSS",
+        "JavaScript"
+      ],
       "status": "live",
       "linkable": true
     },
@@ -27,9 +35,12 @@
       "name": "ToGoAG",
       "url": "https://togoag.com",
       "category": "My businesses",
-      "built": false,
+      "built": true,
       "status": "live",
-      "linkable": true
+      "linkable": true,
+      "stack": [
+        "Square"
+      ]
     },
     {
       "id": "acreprofit",
@@ -38,7 +49,10 @@
       "category": "My businesses",
       "description": "Farmers helping farmers — a bulk buying co-op for farm chemistry and products.",
       "built": true,
-      "stack": ["Node", "Express"],
+      "stack": [
+        "Node",
+        "Express"
+      ],
       "status": "coming-soon",
       "linkable": true
     },
@@ -49,7 +63,11 @@
       "category": "Built for others",
       "description": "Public 9-hole course between Fleming and Haxtun — par 36, 3,261 yards, established 1972.",
       "built": true,
-      "stack": ["HTML", "CSS", "JavaScript"],
+      "stack": [
+        "HTML",
+        "CSS",
+        "JavaScript"
+      ],
       "status": "live",
       "linkable": true
     },
@@ -60,7 +78,9 @@
       "category": "Built for others",
       "description": "Schedule, roster, rules, and updates for the Haxtun Bulldogs 9-12 girls softball team.",
       "built": true,
-      "stack": ["Jekyll"],
+      "stack": [
+        "Jekyll"
+      ],
       "status": "live",
       "linkable": true
     },
@@ -71,7 +91,11 @@
       "category": "Built for others",
       "description": "Website for the Growers Association of Colorado Corn.",
       "built": true,
-      "stack": ["HTML", "CSS", "JavaScript"],
+      "stack": [
+        "HTML",
+        "CSS",
+        "JavaScript"
+      ],
       "status": "live",
       "linkable": true
     },
@@ -81,7 +105,11 @@
       "category": "Built for others",
       "description": "Online entry and results for the Jason Toyne Memorial duck race.",
       "built": true,
-      "stack": ["Next.js", "React", "MongoDB"],
+      "stack": [
+        "Next.js",
+        "React",
+        "MongoDB"
+      ],
       "status": "seasonal",
       "linkable": false
     },
@@ -91,7 +119,9 @@
       "category": "Tools",
       "description": "Internal dashboard tracking grower sales, product performance, and multi-year forecasting.",
       "built": true,
-      "stack": ["JavaScript"],
+      "stack": [
+        "JavaScript"
+      ],
       "status": "live",
       "linkable": false
     },
@@ -102,7 +132,11 @@
       "category": "Family",
       "description": "Password-protected archive of the McConnell girls' sports — scores, pictures, places, and memories.",
       "built": true,
-      "stack": ["HTML", "JavaScript", "Python"],
+      "stack": [
+        "HTML",
+        "JavaScript",
+        "Python"
+      ],
       "status": "live",
       "linkable": true
     },
@@ -113,7 +147,10 @@
       "category": "Personal",
       "description": "The Logan Fire of March 6, 2017, and the book about it.",
       "built": true,
-      "stack": ["HTML", "CSS"],
+      "stack": [
+        "HTML",
+        "CSS"
+      ],
       "status": "live",
       "linkable": true
     },
@@ -123,7 +160,11 @@
       "category": "Personal",
       "description": "A personal collection: rosters, schedules, team history, and game-day trip planning.",
       "built": true,
-      "stack": ["HTML", "CSS", "JavaScript"],
+      "stack": [
+        "HTML",
+        "CSS",
+        "JavaScript"
+      ],
       "status": "live",
       "linkable": false
     },
@@ -133,7 +174,10 @@
       "category": "Personal",
       "description": "Reference guide for the Monaco Diplomat motorhome.",
       "built": true,
-      "stack": ["HTML", "JavaScript"],
+      "stack": [
+        "HTML",
+        "JavaScript"
+      ],
       "status": "live",
       "linkable": false
     }

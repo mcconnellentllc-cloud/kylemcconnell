@@ -99,14 +99,20 @@ use no USDA/FSA logos, and do not link the STC site unless it is confirmed publi
 
 ## Deploy
 
-Hosted as a **Render Static Site** connected to this repo.
+Hosted on **GitHub Pages**, published from the `main` branch, `/ (root)` folder.
+Repo settings > Pages > Source: *Deploy from a branch* > Branch: `main` `/ (root)` > Save.
 
-- Build command: *(none)*
-- Publish directory: `.` (repo root)
-- Auto-deploy on push: on
+Push to `main` and Pages republishes automatically. There is nothing to compile — if it
+renders locally, it renders in production.
 
-Push to the deploy branch and Render rebuilds automatically. There is nothing to
-compile — if it renders locally, it renders in production.
+Two files in the repo root support this:
+
+- `CNAME` — the custom domain Pages serves. Changing the domain means changing this file.
+- `.nojekyll` — stops Pages running the files through Jekyll. Nothing here needs it.
+
+**Render is the alternative host** if Pages is ever a problem: New > Static Site >
+connect this repo, build command none, publish directory `.` (repo root), auto-deploy on.
+Delete `CNAME` if you switch, since Render manages its domains in its own dashboard.
 
 Local preview:
 
@@ -117,17 +123,22 @@ npx http-server . -p 8080 -c-1
 ## DNS
 
 The domain is registered and its DNS is hosted at **Microsoft 365 admin center >
-Settings > Domains > kylemcconnell.com > DNS records**. Nameservers are Microsoft's
-and cannot be moved without transferring the domain, so hosting must work with plain
-`A` and `CNAME` records.
+Settings > Domains > kylemcconnell.com > DNS records**. Nameservers are Microsoft's and
+cannot be moved without transferring the domain, so hosting must work with plain `A` and
+`CNAME` records. Both GitHub Pages and Render do.
 
-Records for Render (use the exact values Render shows under Settings > Custom Domains —
-never values from memory):
+For GitHub Pages, after adding the custom domain in repo settings > Pages, add what that
+screen tells you to add. At the time of writing that is:
 
 | Type | Host | Value | TTL |
 |---|---|---|---|
-| A | `@` | IP address shown by Render | 1 hour |
-| CNAME | `www` | `<name>.onrender.com` shown by Render | 1 hour |
+| CNAME | `www` | `mcconnellentllc-cloud.github.io` | 1 hour |
+| A | `@` | the four apex IPs GitHub lists on the Pages settings screen | 1 hour |
+
+The apex `A` records are only needed so `kylemcconnell.com` redirects to the `www`
+address in `CNAME`. **Use the values the Pages screen shows — do not use values from
+memory.** For Render, use the IP and `*.onrender.com` hostname shown under Settings >
+Custom Domains instead.
 
 **Do not touch** existing MX, TXT, autodiscover, or SRV records — those run Microsoft
 365 email. **Do not** click "Set as default" on the domain in M365; that changes the
@@ -143,9 +154,10 @@ are paid for:
 1. **The domain** — `kylemcconnell.com`, registered through the Microsoft 365 admin
    center on the McConnell Enterprises tenant, auto-renew on. If that lapses, the
    address stops resolving and the site is unreachable even though the files are fine.
-2. **The host** — a Render Static Site pointed at this repo. If Render goes away or
-   the account closes, copy these files to any static host (GitHub Pages works) and
-   repoint the DNS records. Nothing in the code is Render-specific.
+2. **The host** — GitHub Pages, serving the `main` branch of this repo. If GitHub goes
+   away or the account closes, copy these files to any static host (Render, Netlify,
+   a plain web server) and repoint the DNS records. Nothing in the code is
+   host-specific.
 
 If both lapse, the site goes dark but is not lost: this repository is the whole site.
 Anyone with these files and a domain can put it back up in an afternoon.
