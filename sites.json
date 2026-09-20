@@ -162,6 +162,7 @@
     {
       "id": "titans",
       "name": "Tennessee Titans Bible",
+      "url": "https://mcconnellentllc-cloud.github.io/titans/",
       "category": [
         "Personal sites",
         "Sports programs"
@@ -174,7 +175,7 @@
         "JavaScript"
       ],
       "status": "live",
-      "linkable": false
+      "linkable": true
     },
     {
       "id": "rvtimes",
@@ -213,6 +214,21 @@
       "category": "Personal sites",
       "description": "Songs I have written, published on Suno as broosetucker.",
       "built": false,
+      "status": "live",
+      "linkable": true
+    },
+    {
+      "id": "bulldog-golf",
+      "name": "Bulldog Golf",
+      "url": "https://mcconnellentllc-cloud.github.io/BulldogGolf/",
+      "category": "Sites I've built for others",
+      "description": "Hole assignments, pairings, and scoring for the nine-hole tournament.",
+      "built": true,
+      "stack": [
+        "HTML",
+        "CSS",
+        "JavaScript"
+      ],
       "status": "live",
       "linkable": true
     }
