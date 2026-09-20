@@ -356,33 +356,18 @@ h2 {
   color: var(--muted);
 }
 
-/* ---------- Filters ---------- */
+/* ---------- Group headings ---------- */
 
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1.75rem;
+.group-title {
+  margin: 2.25rem 0 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
-.filter {
-  min-height: 44px;
-  padding: 0.5rem 1rem;
-  background: var(--surface);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  font: inherit;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-.filter:hover { border-color: var(--accent); }
-.filter[aria-pressed="true"] {
-  background: var(--accent);
-  color: var(--accent-text);
-  border-color: var(--accent);
-}
+.group-title + .card-grid { margin-top: 0.875rem; }
 
 /* ---------- Cards ---------- */
 
@@ -429,22 +414,22 @@ h2 {
   flex: 1;
 }
 
-.card h3 {
+.card :is(h3, h4) {
   margin: 0;
   font-size: 1.1875rem;
   line-height: 1.25;
 }
 
-.card h3 a {
+.card :is(h3, h4) a {
   text-decoration: none;
   color: var(--text);
 }
-.card h3 a::after {
+.card :is(h3, h4) a::after {
   content: "";
   position: absolute;
   inset: 0;
 }
-.card h3 a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.card :is(h3, h4) a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 .card { position: relative; }
 

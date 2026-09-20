@@ -1,13 +1,16 @@
 # kylemcconnell.com
 
-Static single-page site: a directory of every public site Kyle McConnell runs, plus a
-portfolio of the software he has built. No framework, no build step — the files in this
-repo are what gets served.
+Static single-page site: Kyle McConnell's bio and work, a portfolio of the software he
+has built, and links out to every site he runs. Visitors arrive, scan, and click
+through.
+
+**There is no JavaScript on the deployed site.** No framework, no build step, no
+runtime behavior — plain HTML and CSS. The cards are written into `index.html`; a local
+script generates them from `sites.json` so adding a site stays a one-object edit.
 
 ```
 index.html        page markup, SEO tags, JSON-LD
 styles.css        all styles (light + dark via prefers-color-scheme)
-main.js           renders cards from sites.json, category filters, footer year
 sites.json        single source of truth for every site listed
 img/              screenshots (WebP), Open Graph image, touch icon
 favicon.svg       site icon
@@ -43,18 +46,25 @@ Add one object to the `sites` array in `sites.json`:
 | `status` | `live`, `coming-soon`, or `seasonal`. Non-live statuses show a badge. |
 | `linkable` | `false` for login-only/internal tools — the card renders with no outbound link |
 
-Then regenerate the no-JavaScript fallback list:
+Then regenerate the cards in `index.html`:
 
 ```bash
-node tools/sync-noscript.mjs
+node tools/build-cards.mjs
 ```
 
-That rewrites the block between the `NOSCRIPT:START` / `NOSCRIPT:END` markers in
-`index.html`. Run it any time `sites.json` changes, and commit both files.
+That rewrites the two generated blocks in `index.html` — `CARDS` (the grouped list of
+every site) and `BUILT` (the portfolio) — and leaves the rest of the file alone. Run it
+any time `sites.json` changes, and commit both files. It refuses to run on an entry
+missing `id`, `name`, or `category`, or using a category outside the list below.
+
+Nothing about this is a deploy step: Render serves the committed files exactly as they
+are. If you would rather edit the card markup in `index.html` by hand, that works too —
+just keep `sites.json` in step, or the next run of the script will overwrite your edits.
 
 Card order is fixed by category (My businesses, Built for others, Tools, Family,
 Personal), then alphabetically — customer-facing sites come first without any manual
-ordering.
+ordering. Each category becomes a plain heading above its own row of cards — there are
+no filter buttons and nothing to click but the links themselves.
 
 Category and `built` are two different questions. Category is *who the site is for*;
 `built` is *who wrote the code*. A site can sit under "My businesses" and still appear
@@ -125,8 +135,8 @@ default domain for the whole McConnell Enterprises tenant.
 
 ## Keeping this site alive
 
-The site is plain HTML, CSS, and one small JavaScript file. There is no framework,
-no build step, no package to update, and no server-side code. Left completely alone
+The site is plain HTML and CSS. No JavaScript, no framework, no build step, no package
+to update, and no server-side code. Left completely alone
 it will keep rendering correctly in any browser for as long as the two things below
 are paid for:
 
