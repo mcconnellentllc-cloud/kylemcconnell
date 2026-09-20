@@ -15,6 +15,15 @@ import { readFileSync, writeFileSync } from "node:fs";
 
 const CATEGORY_ORDER = ["My businesses", "Sites I've built for others", "Sports programs", "Family sites", "Personal sites"];
 const STATUS_LABEL = { "coming-soon": "Coming soon", seasonal: "Seasonal", private: "Sign-in required" };
+
+// Short labels for the tab bar; the full names stay on the section headings.
+const NAV_LABEL = {
+  "My businesses": "My businesses",
+  "Sites I've built for others": "Built for others",
+  "Sports programs": "Sports",
+  "Family sites": "Family",
+  "Personal sites": "Personal",
+};
 const INDENT = "    ";
 
 const esc = (value) =>
@@ -98,12 +107,26 @@ function indexRow(site, pad) {
   return `${pad}<li>\n${pad}  <span class="index-head">${name}${badge}</span>\n${pad}  ${desc}\n${pad}  <span class="index-host">${note}</span>\n${pad}</li>`;
 }
 
+function categoryId(category) {
+  return category.toLowerCase().replace(/[^a-z]+/g, "-");
+}
+
+function navTabs() {
+  const out = [];
+  for (const category of CATEGORY_ORDER) {
+    if (!sites.some((site) => site.category === category)) continue;
+    const label = NAV_LABEL[category] || category;
+    out.push(`      <li><a href="#group-${categoryId(category)}">${esc(label)}</a></li>`);
+  }
+  return out.join("\n");
+}
+
 function groupedIndex() {
   const out = [];
   for (const category of CATEGORY_ORDER) {
     const group = sites.filter((site) => site.category === category).sort(byName);
     if (!group.length) continue;
-    const id = category.toLowerCase().replace(/[^a-z]+/g, "-");
+    const id = categoryId(category);
     out.push(`${INDENT}<h3 class="group-title" id="group-${id}">${esc(category)}</h3>`);
     out.push(`${INDENT}<ul class="index-list">`);
     for (const site of group) out.push(indexRow(site, `${INDENT}  `));
@@ -121,7 +144,7 @@ function builtCards() {
   return out.join("\n");
 }
 
-function replaceBlock(html, name, body) {
+function replaceBlock(html, name, body, indent = INDENT) {
   const start = html.indexOf(`<!-- ${name}:START`);
   const end = html.indexOf(`<!-- ${name}:END -->`);
   if (start === -1 || end === -1) {
@@ -129,10 +152,11 @@ function replaceBlock(html, name, body) {
     process.exit(1);
   }
   const startEnd = html.indexOf("-->", start) + 3;
-  return html.slice(0, startEnd) + (body ? `\n${body}\n${INDENT}` : "\n" + INDENT) + html.slice(end);
+  return html.slice(0, startEnd) + (body ? `\n${body}\n${indent}` : "\n" + indent) + html.slice(end);
 }
 
 let html = readFileSync("index.html", "utf8");
+html = replaceBlock(html, "NAV", navTabs(), "    ");
 html = replaceBlock(html, "CARDS", groupedIndex());
 html = replaceBlock(html, "BUILT", builtCards());
 writeFileSync("index.html", html);

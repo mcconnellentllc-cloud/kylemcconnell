@@ -111,9 +111,9 @@ a:hover { color: var(--crimson-strong); }
   border-radius: 2px;
 }
 
-/* ---------- Masthead nav ---------- */
+/* ---------- Tab nav ---------- */
 
-.brand-nav {
+.tab-nav {
   position: sticky;
   top: 0;
   z-index: 10;
@@ -121,52 +121,64 @@ a:hover { color: var(--crimson-strong); }
   border-bottom: 3px solid var(--gold);
 }
 
-.brand-nav ul {
+.tab-nav .wrap {
+  padding-inline: 0;
+  position: relative;
+}
+
+/* On narrow screens the tabs scroll; this fade says there is more to the right. */
+.tab-nav .wrap::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 2rem;
+  pointer-events: none;
+  background: linear-gradient(to right, rgba(20, 17, 15, 0), var(--ink));
+}
+
+.tab-nav ul {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
-.brand-nav li + li { border-left: 1px solid rgba(255, 255, 255, 0.12); }
+.tab-nav ul::-webkit-scrollbar { display: none; }
 
-.brand-nav a {
+.tab-nav li { flex: 0 0 auto; }
+.tab-nav li + li { border-left: 1px solid rgba(255, 255, 255, 0.12); }
+
+.tab-nav a {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 0.1rem;
-  min-height: 62px;
-  padding: 0.625rem 0.5rem;
+  min-height: 52px;
+  padding: 0.75rem 0.8125rem;
   color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   text-decoration: none;
-  text-align: center;
+  white-space: nowrap;
   border-bottom: 3px solid transparent;
   margin-bottom: -3px;
 }
 
-.brand-nav a:hover { background: rgba(255, 255, 255, 0.06); border-bottom-color: var(--gold); }
-.brand-nav a:focus-visible { outline-offset: -3px; }
+.tab-nav a:hover { background: rgba(255, 255, 255, 0.08); border-bottom-color: var(--gold); }
+.tab-nav a:focus-visible { outline-offset: -3px; }
 
-.brand-name {
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: 1rem;
-  letter-spacing: 0.01em;
-}
-
-.brand-host {
-  font-size: 0.6875rem;
-  letter-spacing: 0.06em;
-  text-transform: lowercase;
-  color: rgba(255, 255, 255, 0.72);
-}
-
-@media (min-width: 40rem) {
-  .brand-nav ul { grid-template-columns: repeat(3, auto); justify-content: start; }
-  .brand-nav a { min-height: 68px; padding-inline: 2rem; align-items: flex-start; text-align: left; }
-  .brand-name { font-size: 1.0625rem; }
+@media (min-width: 48rem) {
+  .tab-nav .wrap { padding-inline: 2rem; }
+  .tab-nav .wrap::after { display: none; }
+  .tab-nav ul { overflow-x: visible; }
+  .tab-nav a { min-height: 56px; padding-inline: 1.5rem; font-size: 0.8125rem; }
+  .tab-nav li:first-child { border-left: 1px solid rgba(255, 255, 255, 0.12); }
+  .tab-nav li:last-child { border-right: 1px solid rgba(255, 255, 255, 0.12); }
 }
 
 /* ---------- Header ---------- */
@@ -355,6 +367,7 @@ h2::after {
 /* ---------- Group headings ---------- */
 
 .group-title {
+  scroll-margin-top: 4.5rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
