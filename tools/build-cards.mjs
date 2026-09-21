@@ -45,7 +45,35 @@ const esc = (value) =>
 
 const host = (url) => url.replace(/^https?:\/\//, "").replace(/\/$/, "");
 
-const { sites = [] } = JSON.parse(readFileSync("sites.json", "utf8"));
+const { sites = [], social = [] } = JSON.parse(readFileSync("sites.json", "utf8"));
+
+// Simple one-colour glyphs; no external icon files, nothing to load.
+const ICONS = {
+  facebook:
+    "M17 2h-3a5 5 0 0 0-5 5v3H6v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z",
+  x: "M3 3h4.5l4.2 5.8L16.8 3H21l-6.9 8L21.4 21h-4.5l-4.6-6.3L6.7 21H2.5l7.2-8.3z",
+  linkedin:
+    "M4.5 3a1.9 1.9 0 1 0 0 3.8 1.9 1.9 0 0 0 0-3.8zM3 8.5h3V21H3zM9 8.5h2.9v1.7a3.2 3.2 0 0 1 2.9-1.6c3 0 3.7 1.9 3.7 4.5V21h-3v-6.3c0-1.5-.3-2.6-1.8-2.6s-2.1 1-2.1 2.5V21H9z",
+  instagram:
+    "M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm5.8-2.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2z",
+  tiktok:
+    "M16 2h-3v13.2a2.9 2.9 0 1 1-2.4-2.9V9.2A6.2 6.2 0 1 0 16 15.3V9.1a7.3 7.3 0 0 0 4 1.2V7.2A4.3 4.3 0 0 1 16 2.9z",
+};
+
+function socialLinks(pad = "      ") {
+  if (!social.length) return "";
+  const items = social.map((account) => {
+    const path = ICONS[account.id];
+    if (!path) {
+      console.error(`No icon for social account "${account.id}".`);
+      process.exit(1);
+    }
+    return `${pad}  <li><a href="${esc(account.url)}" target="_blank" rel="noopener me" aria-label="${esc(account.name)} (opens in a new tab)">` +
+      `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${path}"/></svg>` +
+      `<span>${esc(account.name)}</span></a></li>`;
+  });
+  return `${pad}<ul class="social">\n${items.join("\n")}\n${pad}</ul>`;
+}
 
 
 for (const site of sites) {
@@ -67,7 +95,7 @@ const byName = (a, b) => a.name.localeCompare(b.name);
 
 function card(site, level, pad, showCategory = false) {
   const lines = [];
-  lines.push(`${pad}<li class="card">`);
+  lines.push(`${pad}<li class="card sec-${categoryId(site.category)}">`);
 
   if (site.image) {
     lines.push(
@@ -145,13 +173,17 @@ function navTabs(current, pad = "      ") {
 
 function listFor(category, pad = INDENT) {
   const group = sites.filter((site) => site.category === category).sort(byName);
-  return [`${pad}<ul class="index-list">`, ...group.map((s) => indexRow(s, `${pad}  `)), `${pad}</ul>`].join("\n");
+  return [
+    `${pad}<ul class="index-list sec-${categoryId(category)}">`,
+    ...group.map((s) => indexRow(s, `${pad}  `)),
+    `${pad}</ul>`,
+  ].join("\n");
 }
 
 function groupedIndex(pad = INDENT) {
   const out = [];
   for (const category of usedCategories()) {
-    out.push(`${pad}<h2 class="group-title" id="group-${categoryId(category)}">${esc(category)}</h2>`);
+    out.push(`${pad}<h2 class="group-title sec-${categoryId(category)}" id="group-${categoryId(category)}">${esc(category)}</h2>`);
     out.push(listFor(category, pad));
   }
   return out.join("\n");
@@ -203,7 +235,7 @@ function page({ title, heading, lede, path, description, current, listing, count
 <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
 <link rel="stylesheet" href="/styles.css">
 </head>
-<body>
+<body${current && current !== "all" ? ` class="sec-${categoryId(current)}"` : ""}>
 <a class="skip-link" href="#main">Skip to content</a>
 
 <nav class="tab-nav" aria-label="Site sections">
@@ -231,6 +263,7 @@ ${listing}
 
 <footer class="site-footer">
   <div class="wrap">
+${socialLinks("    ")}
     <p><a href="/">Back to kylemcconnell.com</a></p>
     <p>&copy; Kyle McConnell &middot; Haxtun, Colorado</p>
   </div>
@@ -244,6 +277,7 @@ ${listing}
 let home = readFileSync("index.html", "utf8");
 home = replaceBlock(home, "NAV", navTabs(null), "    ");
 home = replaceBlock(home, "BUILT", builtCards());
+home = replaceBlock(home, "SOCIAL", socialLinks("      "), "    ");
 writeFileSync("index.html", home);
 
 // The full index, every category on one page.

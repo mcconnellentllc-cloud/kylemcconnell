@@ -174,3 +174,25 @@ are paid for:
 
 If both lapse, the site goes dark but is not lost: this repository is the whole site.
 Anyone with these files and a domain can put it back up in an afternoon.
+
+## Social accounts
+
+Add a `social` array beside `sites` in `sites.json`:
+
+```json
+"social": [
+  { "id": "facebook", "name": "Facebook", "url": "https://facebook.com/…" }
+]
+```
+
+`id` picks the icon and must be one of `facebook`, `x`, `linkedin`, `instagram`, or
+`tiktok` — the generator stops if it does not recognize one. The links render in the
+footer of every page. Leave the array out and nothing renders.
+
+## Section colors
+
+Each section has its own accent: businesses crimson, built for others green, sports
+amber, family plum, personal navy. The generator puts a `sec-<slug>` class on every
+group heading, list and card, and the CSS reads `--sec` from it, so a card, its
+heading, its links and its page header all pick up the right color with no per-section
+rules. All ten accents (five sections, two themes) clear WCAG AA.
