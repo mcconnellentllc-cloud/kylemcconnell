@@ -9,9 +9,9 @@ runtime behavior — plain HTML and CSS. The cards are written into `index.html`
 script generates them from `sites.json` so adding a site stays a one-object edit.
 
 ```
-index.html        home page: bio, timeline, what Kyle does, portfolio cards
-sites/index.html  all sites, grouped by section
-sites/<slug>/     one page per section, listing only that section
+index.html        home page: Kyle's resume. No site listings, by design.
+sites/index.html  every site, grouped by section, as cards
+sites/<slug>/     one page per section, cards for that section only
 styles.css        all styles, shared by every page (light + dark)
 sites.json        single source of truth for every site listed
 img/              screenshots (WebP), Open Graph image, touch icon
@@ -54,8 +54,10 @@ Then regenerate the cards in `index.html`:
 node tools/build-cards.mjs
 ```
 
-In `index.html` it rewrites two generated blocks and leaves the rest alone: `BUILT`
-(the portfolio cards) and `NAV` (the tab bar). Everything under `sites/` is generated
+In `index.html` it rewrites four generated blocks and leaves the resume copy alone:
+`NAV` (the tab bar), `SOCIALHEAD` and `SOCIAL` (the account rows in the header and
+footer), and `SKILLS` (the tag list, collected from every `stack` in `sites.json`). It
+also rewrites the `sameAs` list inside the JSON-LD block. Everything under `sites/` is generated
 whole — `sites/index.html` plus one folder per section — so do not hand-edit those
 files; change `sites.json` or the template in the script and re-run.
 

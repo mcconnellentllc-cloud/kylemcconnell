@@ -252,6 +252,21 @@
       "id": "tiktok",
       "name": "TikTok",
       "url": "https://www.tiktok.com/@mcconnellenterpri"
+    },
+    {
+      "id": "suno",
+      "name": "Suno",
+      "url": "https://suno.com/@broosetucker"
+    },
+    {
+      "id": "facebook",
+      "name": "McConnell Enterprises",
+      "url": "https://www.facebook.com/mcconnellentllc/"
+    },
+    {
+      "id": "facebook",
+      "name": "Colorado Pheasant Hunting",
+      "url": "https://www.facebook.com/coloradopheasanthunting/"
     }
   ]
 }

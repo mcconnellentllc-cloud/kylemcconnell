@@ -56,6 +56,8 @@ const ICONS = {
     "M4.5 3a1.9 1.9 0 1 0 0 3.8 1.9 1.9 0 0 0 0-3.8zM3 8.5h3V21H3zM9 8.5h2.9v1.7a3.2 3.2 0 0 1 2.9-1.6c3 0 3.7 1.9 3.7 4.5V21h-3v-6.3c0-1.5-.3-2.6-1.8-2.6s-2.1 1-2.1 2.5V21H9z",
   instagram:
     "M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm5.8-2.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2z",
+  suno:
+    "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm3.6 4.4v6.9a2.6 2.6 0 1 1-1.6-2.4V8.5l-4.4 1v5.6a2.6 2.6 0 1 1-1.6-2.4V8.2z",
   tiktok:
     "M16 2h-3v13.2a2.9 2.9 0 1 1-2.4-2.9V9.2A6.2 6.2 0 1 0 16 15.3V9.1a7.3 7.3 0 0 0 4 1.2V7.2A4.3 4.3 0 0 1 16 2.9z",
 };
@@ -174,8 +176,8 @@ function navTabs(current, pad = "      ") {
 function listFor(category, pad = INDENT) {
   const group = sites.filter((site) => site.category === category).sort(byName);
   return [
-    `${pad}<ul class="index-list sec-${categoryId(category)}">`,
-    ...group.map((s) => indexRow(s, `${pad}  `)),
+    `${pad}<ul class="card-grid sec-${categoryId(category)}">`,
+    ...group.map((s) => card(s, 3, `${pad}  `)),
     `${pad}</ul>`,
   ].join("\n");
 }
@@ -186,15 +188,6 @@ function groupedIndex(pad = INDENT) {
     out.push(`${pad}<h2 class="group-title sec-${categoryId(category)}" id="group-${categoryId(category)}">${esc(category)}</h2>`);
     out.push(listFor(category, pad));
   }
-  return out.join("\n");
-}
-
-function builtCards() {
-  const built = sites.filter((site) => site.built === true).sort(byName);
-  if (!built.length) return "";
-  const out = [`${INDENT}<ul class="card-grid">`];
-  for (const site of built) out.push(card(site, 3, `${INDENT}  `, true));
-  out.push(`${INDENT}</ul>`);
   return out.join("\n");
 }
 
@@ -273,6 +266,12 @@ ${socialLinks("    ")}
 `;
 }
 
+function skillTags(pad = INDENT) {
+  const tags = [...new Set(sites.flatMap((s) => s.stack || []))].sort((a, b) => a.localeCompare(b));
+  if (!tags.length) return "";
+  return [`${pad}<ul class="tags tags-lg">`, ...tags.map((t) => `${pad}  <li class="tag">${esc(t)}</li>`), `${pad}</ul>`].join("\n");
+}
+
 // Public profiles for the Person schema: linkable sites, minus anything gated, plus social.
 function sameAs() {
   const urls = [
@@ -294,8 +293,9 @@ function replaceSameAs(html) {
 // Home page: portfolio cards, and tabs that cross over to the category pages.
 let home = readFileSync("index.html", "utf8");
 home = replaceBlock(home, "NAV", navTabs(null), "    ");
-home = replaceBlock(home, "BUILT", builtCards());
+home = replaceBlock(home, "SOCIALHEAD", socialLinks("      "), "    ");
 home = replaceBlock(home, "SOCIAL", socialLinks("      "), "    ");
+home = replaceBlock(home, "SKILLS", skillTags());
 home = replaceSameAs(home);
 writeFileSync("index.html", home);
 
@@ -336,7 +336,7 @@ for (const category of usedCategories()) {
 }
 
 console.log(
-  `index.html: ${sites.filter((s) => s.built).length} portfolio card(s), ` +
+  `index.html: resume, ` +
     `${social.length} social link(s), ${sameAs().split("\n").length} sameAs entries. ` +
     `sites/: all ${sites.length} plus ${usedCategories().length} category page(s).`
 );
