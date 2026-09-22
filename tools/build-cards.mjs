@@ -273,11 +273,30 @@ ${socialLinks("    ")}
 `;
 }
 
+// Public profiles for the Person schema: linkable sites, minus anything gated, plus social.
+function sameAs() {
+  const urls = [
+    ...sites.filter((s) => s.linkable !== false && s.url && s.status !== "private").map((s) => s.url),
+    ...social.map((a) => a.url),
+  ];
+  return [...new Set(urls)].map((u) => `    "${esc(u)}"`).join(",\n");
+}
+
+function replaceSameAs(html) {
+  const match = html.match(/  "sameAs": \[\n[\s\S]*?\n  \],\n/);
+  if (!match) {
+    console.error("Could not find the sameAs list in index.html.");
+    process.exit(1);
+  }
+  return html.replace(match[0], `  "sameAs": [\n${sameAs()}\n  ],\n`);
+}
+
 // Home page: portfolio cards, and tabs that cross over to the category pages.
 let home = readFileSync("index.html", "utf8");
 home = replaceBlock(home, "NAV", navTabs(null), "    ");
 home = replaceBlock(home, "BUILT", builtCards());
 home = replaceBlock(home, "SOCIAL", socialLinks("      "), "    ");
+home = replaceSameAs(home);
 writeFileSync("index.html", home);
 
 // The full index, every category on one page.
@@ -317,6 +336,7 @@ for (const category of usedCategories()) {
 }
 
 console.log(
-  `index.html: ${sites.filter((s) => s.built).length} portfolio card(s). ` +
+  `index.html: ${sites.filter((s) => s.built).length} portfolio card(s), ` +
+    `${social.length} social link(s), ${sameAs().split("\n").length} sameAs entries. ` +
     `sites/: all ${sites.length} plus ${usedCategories().length} category page(s).`
 );

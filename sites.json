@@ -226,5 +226,32 @@
       "status": "live",
       "linkable": true
     }
+  ],
+  "social": [
+    {
+      "id": "facebook",
+      "name": "Facebook",
+      "url": "https://www.facebook.com/kyle.d.mcconnell/"
+    },
+    {
+      "id": "x",
+      "name": "X",
+      "url": "https://x.com/McConnellEntLLC"
+    },
+    {
+      "id": "instagram",
+      "name": "Instagram",
+      "url": "https://www.instagram.com/m77angus/"
+    },
+    {
+      "id": "linkedin",
+      "name": "LinkedIn",
+      "url": "https://www.linkedin.com/in/kyle-mcconnell-35947496/"
+    },
+    {
+      "id": "tiktok",
+      "name": "TikTok",
+      "url": "https://www.tiktok.com/@mcconnellenterpri"
+    }
   ]
 }
