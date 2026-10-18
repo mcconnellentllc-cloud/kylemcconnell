@@ -64,6 +64,10 @@
   .login { max-width: 24rem; margin: 3rem auto; }
   .fullmail { white-space: pre-wrap; font-size: .88rem; background: var(--surface-2); border-radius: var(--radius); padding: .6rem; max-height: 18rem; overflow: auto; margin-top: .5rem; }
   .err-inline { color: var(--crimson); font-size: .88rem; }
+  .jstatus { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+  .jstatus.new { color: var(--muted); } .jstatus.working { color: var(--amber); } .jstatus.done { color: var(--green); } .jstatus.needs_you { color: var(--crimson); }
+  .reply { margin-top: .45rem; padding: .55rem .7rem; border-left: 3px solid var(--gold); background: var(--surface-2); border-radius: 0 var(--radius) var(--radius) 0; font-size: .92rem; white-space: pre-wrap; }
+  .actions-list { margin: .35rem 0 0; padding-left: 1.1rem; font-size: .88rem; color: var(--muted); }
   [hidden] { display: none !important; }
 </style>
 </head>
@@ -103,6 +107,17 @@
     </div>
 
     <div class="tiles" id="tiles"></div>
+
+    <section class="panel">
+      <h2>Tell Claude</h2>
+      <form id="journalForm">
+        <label for="jText" class="visually-hidden">What needs done</label>
+        <textarea id="jText" maxlength="8000" placeholder="What needs done, what's on your mind, who needs to know. Example: Tell Matt and Larry harvest moves to the Peterson ground Monday. Find tarp parts for Unit 106. Call Ross Tuesday about the operating note."></textarea>
+        <div class="row"><button class="btn" type="submit">Send to Claude</button><span class="empty" style="font-size:.85rem">Claude works new entries every hour and answers here. Emails and public posts still wait for your approval.</span></div>
+        <div class="msg" id="jMsg"></div>
+      </form>
+      <div id="journal" style="margin-top:.6rem"></div>
+    </section>
 
     <section class="panel">
       <h2>Needs you</h2>
@@ -204,7 +219,7 @@
   var KEY = 'lifeToken';
   var token = null;
   try { token = localStorage.getItem(KEY); } catch (e) {}
-  var state = { today: null, drafts: [], posts: [] };
+  var state = { today: null, drafts: [], posts: [], journal: [] };
 
   var $ = function (id) { return document.getElementById(id); };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -248,7 +263,8 @@
       { k: 'Bills overdue', v: money(bi.overdueTotal, true), s: bi.dueThisWeek ? money(bi.dueThisWeek, true) + ' due this week' : 'nothing due this week', warn: bi.overdueTotal > 0 },
       { k: 'Owed to you', v: money(r.total), s: (r.count || 0) + ' open invoices' + (r.overdueCount ? ', ' + r.overdueCount + ' late' : ''), warn: r.overdueCount > 0 },
       { k: 'Emails need you', v: String(e.actionRequired || 0), s: (e.totalUnread || 0) + ' unread' },
-      { k: 'Replies to approve', v: String(waiting), s: waiting ? 'drafted for you below' : 'none waiting', warn: waiting > 0 }
+      { k: 'Replies to approve', v: String(waiting), s: waiting ? 'drafted for you below' : 'none waiting', warn: waiting > 0 },
+      { k: 'Claude needs you', v: String((d.journal && d.journal.needsYou) || 0), s: ((d.journal && d.journal.open) || 0) + ' entries open', warn: d.journal && d.journal.needsYou > 0 }
     ];
     $('tiles').innerHTML = tiles.map(function (t) {
       return '<div class="tile' + (t.warn ? ' warn' : '') + '"><div class="k">' + esc(t.k) + '</div><div class="v">' + esc(t.v) + '</div><div class="s">' + esc(t.s) + '</div></div>';
@@ -363,15 +379,32 @@
       (accts ? '<p style="margin:.8rem 0 .3rem;font-size:.85rem;color:var(--muted)">Connected mailboxes</p><table><tbody>' + accts + '</tbody></table>' : '<p class="empty">No mailboxes connected. Connect them in Mail Center.</p>');
   }
 
+  var JSTATUS = { new: 'Waiting for Claude', working: 'Claude is on it', done: 'Done', needs_you: 'Needs you' };
+  var JTYPE = { todo: 'To-do', work: 'Job', post: 'Update', draft: 'Email draft', note: 'Note' };
+  function renderJournal() {
+    var list = state.journal;
+    $('journal').innerHTML = list.length ? list.map(function (j) {
+      return '<div class="item" data-journal="' + esc(j.id) + '"><div class="sub"><span class="jstatus ' + esc(j.status) + '">' + esc(JSTATUS[j.status] || j.status) + '</span> &middot; ' + esc(when(j.createdAt)) + '</div>' +
+        '<p style="white-space:pre-wrap">' + esc(j.text) + '</p>' +
+        (j.response ? '<div class="reply">' + esc(j.response) + '</div>' : '') +
+        ((j.actions || []).length ? '<ul class="actions-list">' + j.actions.map(function (a) { return '<li>' + esc(JTYPE[a.type] || a.type) + ': ' + esc(a.label) + '</li>'; }).join('') + '</ul>' : '') +
+        '<div class="row">' + (j.status === 'needs_you' ? '<button class="btn small" data-act="jreply">Answer</button>' : '') +
+        (j.status !== 'done' ? '<button class="btn small ghost" data-act="jdone">Mark done</button>' : '') +
+        '<button class="btn small ghost" data-act="jdel">Remove</button></div>' +
+        '<div class="jcompose" hidden><textarea></textarea><div class="row"><button class="btn small" data-act="jsend">Send answer</button></div></div><div class="msg"></div></div>';
+    }).join('') : '<p class="empty">Nothing yet. Write what needs done above.</p>';
+  }
+
   function render() {
     var d = state.today;
+    renderJournal();
     $('stamp').textContent = 'Updated ' + when(d.generatedAt);
     renderTiles(d); renderNeeds(d); renderUpcoming(d); renderTasks(d); renderPostDrafts(); renderMoney(d);
   }
 
   function load() {
-    return Promise.all([api('GET', '/api/life/today'), api('GET', '/api/life/drafts'), api('GET', '/api/life/posts')]).then(function (r) {
-      state.today = r[0].data; state.drafts = r[1].data || []; state.posts = r[2].data || [];
+    return Promise.all([api('GET', '/api/life/today'), api('GET', '/api/life/drafts'), api('GET', '/api/life/posts'), api('GET', '/api/life/journal?limit=25')]).then(function (r) {
+      state.today = r[0].data; state.drafts = r[1].data || []; state.posts = r[2].data || []; state.journal = r[3].data || [];
       show('appView'); render();
     });
   }
@@ -407,6 +440,23 @@
         .catch(function (e) { box.textContent = e.message; }).then(function () { busy(b, false); });
     }
     if (act === 'write') { item.querySelector('.compose').hidden = false; item.querySelector('.compose textarea').focus(); return; }
+
+    var jid = b.closest('[data-journal]') && b.closest('[data-journal]').getAttribute('data-journal');
+    var jitem = jid && b.closest('[data-journal]');
+    var jmsg = jitem && jitem.querySelector(':scope > .msg');
+    if (act === 'jreply') { jitem.querySelector('.jcompose').hidden = false; jitem.querySelector('.jcompose textarea').focus(); return; }
+    if (act === 'jsend') {
+      // An answer is a new entry quoting the question, so Claude reads it next run.
+      var ans = jitem.querySelector('.jcompose textarea').value.trim();
+      if (!ans) return setMsg(jmsg, 'Write an answer first.', 'err');
+      var orig = state.journal.filter(function (x) { return x.id === jid; })[0] || {};
+      busy(b, true);
+      return api('POST', '/api/life/journal', { text: ans + '\n\n(Answering: ' + (orig.response || orig.text || '').slice(0, 1500) + ')' })
+        .then(function () { return api('PATCH', '/api/life/journal/' + jid, { status: 'done' }); }).then(load)
+        .catch(function (e) { setMsg(jmsg, e.message, 'err'); busy(b, false); });
+    }
+    if (act === 'jdone') { busy(b, true); return api('PATCH', '/api/life/journal/' + jid, { status: 'done' }).then(load).catch(function (e) { setMsg(jmsg, e.message, 'err'); busy(b, false); }); }
+    if (act === 'jdel') { if (!confirm('Remove this entry?')) return; busy(b, true); return api('DELETE', '/api/life/journal/' + jid).then(load).catch(function (e) { setMsg(jmsg, e.message, 'err'); busy(b, false); }); }
 
     var did = item && item.getAttribute('data-draft');
     if (act === 'send') {
@@ -474,6 +524,14 @@
         start();
       })
       .catch(function (e) { setMsg($('loginMsg'), e.message === 'Failed to fetch' ? 'Could not reach m77ag.com.' : e.message, 'err'); });
+  });
+
+  $('journalForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var m = $('jMsg');
+    api('POST', '/api/life/journal', { text: $('jText').value })
+      .then(function () { ev.target.reset(); setMsg(m, 'Sent. Claude will pick it up on the next hourly run.', 'ok'); return load(); })
+      .catch(function (e) { setMsg(m, e.message, 'err'); });
   });
 
   $('todoForm').addEventListener('submit', function (ev) {
