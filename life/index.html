@@ -2,11 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
-<title>Command Center — Kyle McConnell</title>
+<title>Kyle's Hub</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/life/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/life/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kyle's Hub">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#14110f">
 <link rel="stylesheet" href="/styles.css">
 <!--
   Private Command Center (Kyle, Oct 18, 2026). The one page on this site that
@@ -16,7 +23,7 @@
   the noindex tag above.
 -->
 <style>
-  .app { padding: 1rem 0 3rem; }
+  .app { padding: calc(1rem + env(safe-area-inset-top)) 0 calc(3rem + env(safe-area-inset-bottom)); }
   .bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .75rem; margin-bottom: 1rem; }
   .bar h1 { margin: 0; font-size: 1.6rem; }
   .bar .meta { color: var(--muted); font-size: .9rem; }
@@ -563,6 +570,10 @@
       }).catch(function (e) { setMsg(m, e.message, 'err'); });
   });
   function siteText(j) { return j && j.site ? (j.site.published ? ' kylemcconnell.com updated.' : ' kylemcconnell.com not updated: ' + j.site.reason) : ''; }
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () { navigator.serviceWorker.register('/life/sw.js', { scope: '/life/' }).catch(function () {}); });
+  }
 
   start();
 })();
