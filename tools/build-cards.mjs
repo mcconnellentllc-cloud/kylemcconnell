@@ -16,7 +16,7 @@
  * This is a local maintenance step, not a deploy build step — the host serves
  * the committed files as-is.
  */
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 
 const CATEGORY_ORDER = ["My businesses", "Sites I've built for others", "Sports programs", "Family sites", "Personal sites"];
 const STATUS_LABEL = { "coming-soon": "Coming soon", seasonal: "Seasonal", private: "Sign-in required" };
@@ -300,6 +300,15 @@ home = replaceBlock(home, "SOCIAL", socialLinks("      "), "    ");
 home = replaceBlock(home, "SKILLS", skillTags());
 home = replaceSameAs(home);
 writeFileSync("index.html", home);
+
+// Updates page: tabs and footer links only. Its UPDATES-LIST block is written
+// by m77ag.com when Kyle publishes and is left alone here.
+if (existsSync("updates/index.html")) {
+  let updates = readFileSync("updates/index.html", "utf8");
+  updates = replaceBlock(updates, "NAV", navTabs(null), "    ");
+  updates = replaceBlock(updates, "SOCIAL", socialLinks("      "), "    ");
+  writeFileSync("updates/index.html", updates);
+}
 
 // The full index, every category on one page.
 writeFileSync(
