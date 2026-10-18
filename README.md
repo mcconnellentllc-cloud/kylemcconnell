@@ -4,8 +4,9 @@ Static single-page site: Kyle McConnell's bio and work, a portfolio of the softw
 has built, and links out to every site he runs. Visitors arrive, scan, and click
 through.
 
-**There is no JavaScript on the deployed site.** No framework, no build step, no
-runtime behavior — plain HTML and CSS. The cards are written into `index.html`; a local
+**There is no JavaScript on the public pages.** No framework, no build step, no
+runtime behavior — plain HTML and CSS. The one exception is `/life/`, Kyle's private
+Command Center (see below). The cards are written into `index.html`; a local
 script generates them from `sites.json` so adding a site stays a one-object edit.
 
 ```
@@ -18,7 +19,29 @@ img/              screenshots (WebP), Open Graph image, touch icon
 favicon.svg       site icon
 footer-snippet.html  copy-paste cross-link footer for Kyle's other sites
 tools/            local maintenance scripts (never run at deploy time)
+updates/index.html  public updates page; its list is written by m77ag.com
+feed.json         JSON Feed of public updates, written by m77ag.com
+life/index.html   private Command Center (JavaScript; signs in to m77ag.com)
 ```
+
+## Updates and the Command Center (Oct 2026)
+
+m77ag.com is the engine; this site is the front door.
+
+- **Public updates.** When Kyle publishes a public update in the Command Center,
+  m77ag.com rebuilds `feed.json`, the `LATEST` block in `index.html` and the
+  `UPDATES-LIST` block in `updates/index.html` from its database and commits them
+  here in one commit. Do not hand-edit between those markers; edits are overwritten
+  on the next publish. Everything outside the markers is untouched.
+  m77ag needs `SITE_PUBLISH_TOKEN` (a fine-grained GitHub token for this repository
+  only, Contents: read and write) set in Render.
+- **`/life/`** signs in with an m77ag.com login and reads everything from the m77ag
+  API (`/api/life/*`). No private data is stored in this repository. It is excluded
+  from search (`robots.txt`, `noindex`). m77ag must list `https://kylemcconnell.com`
+  and `https://www.kylemcconnell.com` in its `CORS_ORIGINS` setting in Render.
+  Crew logins (employee/farmer) are sent to the crew briefing at m77ag.com/briefing.
+- `tools/build-cards.mjs` refreshes the tabs and footer on `updates/index.html` and
+  leaves its update list alone.
 
 ## Add or edit a site
 

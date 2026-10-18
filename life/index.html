@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Command Center — Kyle McConnell</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css">
+<!--
+  Private Command Center (Kyle, Oct 18, 2026). The one page on this site that
+  runs JavaScript: it signs in to m77ag.com and reads everything from there.
+  Nothing private is stored in this repository; without a valid m77ag login
+  the page shows only the sign-in form. Kept out of search by robots.txt and
+  the noindex tag above.
+-->
+<style>
+  .app { padding: 1rem 0 3rem; }
+  .bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .75rem; margin-bottom: 1rem; }
+  .bar h1 { margin: 0; font-size: 1.6rem; }
+  .bar .meta { color: var(--muted); font-size: .9rem; }
+  .btn { display: inline-block; padding: .55rem 1rem; border-radius: var(--radius); border: 1px solid var(--accent); background: var(--accent); color: var(--accent-text); font: inherit; font-size: .95rem; font-weight: 600; cursor: pointer; text-decoration: none; }
+  .btn.ghost { background: transparent; color: var(--text); border-color: var(--border-strong); }
+  .btn.small { padding: .35rem .7rem; font-size: .85rem; }
+  .btn:disabled { opacity: .55; cursor: default; }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1rem 1.1rem; margin-bottom: 1rem; }
+  .panel h2 { font-size: 1.15rem; margin: 0 0 .75rem; }
+  .panel h2::after { display: none; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: .75rem; margin-bottom: 1rem; }
+  .tile { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: .8rem .9rem; }
+  .tile .k { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .tile .v { font-size: 1.45rem; font-weight: 700; margin-top: .15rem; font-variant-numeric: tabular-nums; }
+  .tile .s { font-size: .85rem; color: var(--muted); margin-top: .1rem; }
+  .tile.warn .v { color: var(--crimson); }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 52rem) { .cols { grid-template-columns: 1fr; } }
+  table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+  th, td { text-align: left; padding: .45rem .35rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .neg { color: var(--crimson); }
+  .pos { color: var(--green); }
+  .tag { display: inline-block; font-size: .72rem; font-weight: 600; padding: .05rem .45rem; border-radius: 999px; border: 1px solid var(--border-strong); color: var(--muted); white-space: nowrap; }
+  .dot { display: inline-block; width: .6rem; height: .6rem; border-radius: 50%; margin-right: .35rem; vertical-align: middle; }
+  .item { border-top: 1px solid var(--border); padding: .7rem 0; }
+  .item:first-child { border-top: 0; padding-top: 0; }
+  .item h3 { font-size: 1rem; margin: 0; }
+  .item .sub { font-size: .85rem; color: var(--muted); margin-top: .15rem; }
+  .item p { margin: .35rem 0 0; font-size: .93rem; }
+  .row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .55rem; align-items: center; }
+  .row select { width: auto; padding: .35rem .5rem; font-size: .9rem; }
+  label { display: block; font-size: .85rem; font-weight: 600; margin: .6rem 0 .25rem; }
+  input, select, textarea { width: 100%; box-sizing: border-box; padding: .6rem; border: 1px solid var(--border-strong); border-radius: var(--radius); background: var(--surface); color: var(--text); font: inherit; font-size: 16px; }
+  textarea { min-height: 7rem; resize: vertical; }
+  .grid3 { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0 .6rem; }
+  @media (max-width: 40rem) { .grid3 { grid-template-columns: 1fr; } }
+  .check { display: flex; gap: .55rem; align-items: flex-start; }
+  .check input[type=checkbox] { width: 1.15rem; height: 1.15rem; margin-top: .2rem; flex: none; }
+  .empty { color: var(--muted); font-size: .93rem; margin: 0; }
+  .msg { font-size: .88rem; min-height: 1.2rem; margin-top: .4rem; }
+  .msg.err { color: var(--crimson); }
+  .msg.ok { color: var(--green); }
+  .login { max-width: 24rem; margin: 3rem auto; }
+  .fullmail { white-space: pre-wrap; font-size: .88rem; background: var(--surface-2); border-radius: var(--radius); padding: .6rem; max-height: 18rem; overflow: auto; margin-top: .5rem; }
+  .err-inline { color: var(--crimson); font-size: .88rem; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main class="wrap app" id="main">
+
+  <section class="panel login" id="loginView" hidden>
+    <h2>Command Center</h2>
+    <p class="empty">Sign in with your m77ag.com login.</p>
+    <form id="loginForm">
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" required>
+      <div class="row"><button class="btn" type="submit">Sign in</button></div>
+      <div class="msg err" id="loginMsg"></div>
+    </form>
+  </section>
+
+  <section class="panel login" id="crewView" hidden>
+    <h2>Your briefing is on m77ag.com</h2>
+    <p class="empty">This page is for Kyle and Brandi. Your work board and updates are at the crew briefing.</p>
+    <div class="row"><a class="btn" href="https://m77ag.com/briefing">Open the crew briefing</a> <button class="btn ghost" data-act="logout">Sign out</button></div>
+  </section>
+
+  <div id="appView" hidden>
+    <div class="bar">
+      <div>
+        <h1>Command Center</h1>
+        <div class="meta" id="stamp"></div>
+      </div>
+      <div class="row" style="margin:0">
+        <button class="btn ghost" data-act="refresh">Refresh</button>
+        <a class="btn ghost" href="https://m77ag.com/admin/mail-center" target="_blank" rel="noopener">Mail Center</a>
+        <button class="btn ghost" data-act="logout">Sign out</button>
+      </div>
+    </div>
+
+    <div class="tiles" id="tiles"></div>
+
+    <section class="panel">
+      <h2>Needs you</h2>
+      <div id="needs"></div>
+    </section>
+
+    <div class="cols">
+      <section class="panel">
+        <h2>Next 30 days</h2>
+        <div id="upcoming"></div>
+      </section>
+      <section class="panel">
+        <h2>To-do</h2>
+        <form id="todoForm" class="row" style="margin:0 0 .6rem">
+          <input id="todoTitle" placeholder="Add a to-do" maxlength="200" required style="flex:1 1 12rem">
+          <input id="todoDue" type="date" style="flex:0 1 10rem" aria-label="Due date">
+          <button class="btn small" type="submit">Add</button>
+        </form>
+        <div id="todos"></div>
+      </section>
+    </div>
+
+    <section class="panel">
+      <h2>Work that needs done</h2>
+      <form id="workForm">
+        <div class="grid3">
+          <div><label for="wTitle">Job</label><input id="wTitle" maxlength="200" required></div>
+          <div><label for="wLoc">Where</label><input id="wLoc" maxlength="200" placeholder="Field 53, Unit #106"></div>
+          <div><label for="wWho">Who</label><input id="wWho" maxlength="100" placeholder="Matt, Larry"></div>
+        </div>
+        <div class="grid3">
+          <div><label for="wNotes">Notes</label><input id="wNotes" maxlength="4000"></div>
+          <div><label for="wPri">Priority</label><select id="wPri"><option value="normal">Normal</option><option value="high">High</option><option value="urgent">Urgent</option><option value="low">Low</option></select></div>
+          <div><label for="wDue">Needed by</label><input id="wDue" type="date"></div>
+        </div>
+        <div class="row"><label class="check" style="margin:0;font-weight:500"><input type="checkbox" id="wCrew" checked> Show on the crew briefing</label><button class="btn small" type="submit">Stage job</button></div>
+        <div class="msg" id="workMsg"></div>
+      </form>
+      <div id="work" style="margin-top:.8rem"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Post an update</h2>
+      <form id="postForm">
+        <label for="pTitle">Title</label>
+        <input id="pTitle" maxlength="200" required>
+        <label for="pBody">What's going on</label>
+        <textarea id="pBody" maxlength="8000"></textarea>
+        <div class="grid3">
+          <div><label for="pLink">Link (optional)</label><input id="pLink" maxlength="500" placeholder="https://"></div>
+          <div><label for="pCat">Category</label><input id="pCat" maxlength="60" placeholder="Farm, Seed, Music"></div>
+          <div><label for="pAud">Who sees it</label><select id="pAud"><option value="crew">Crew (Brandi, Matt, Larry)</option><option value="public">Public (kylemcconnell.com)</option><option value="private">Just me</option></select></div>
+        </div>
+        <div class="row"><button class="btn" type="submit" data-status="published">Publish</button><button class="btn ghost" type="submit" data-status="draft">Save draft</button></div>
+        <div class="msg" id="postMsg"></div>
+      </form>
+      <div id="postDrafts" style="margin-top:.8rem"></div>
+    </section>
+
+    <div class="cols">
+      <section class="panel">
+        <h2>Bank accounts</h2>
+        <div id="banks"></div>
+      </section>
+      <section class="panel">
+        <h2>Loans</h2>
+        <div id="loans"></div>
+      </section>
+    </div>
+
+    <div class="cols">
+      <section class="panel">
+        <h2>Bills</h2>
+        <div id="bills"></div>
+      </section>
+      <section class="panel">
+        <h2>Owed to you</h2>
+        <div id="recv"></div>
+      </section>
+    </div>
+
+    <section class="panel">
+      <h2>Mail by business</h2>
+      <div id="mail"></div>
+    </section>
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  // m77ag.com is the engine. A different API base is accepted only when this
+  // page itself runs on localhost (testing), so a link can never point the
+  // sign-in form at another server.
+  var API = 'https://m77ag.com';
+  var local = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  if (local) { var q = new URLSearchParams(location.search).get('api'); if (q && /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(q)) API = q; }
+
+  var KEY = 'lifeToken';
+  var token = null;
+  try { token = localStorage.getItem(KEY); } catch (e) {}
+  var state = { today: null, drafts: [], posts: [] };
+
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function money(n, cents) { if (n == null || isNaN(n)) return '—'; return (n < 0 ? '-' : '') + '$' + Math.abs(Number(n)).toLocaleString('en-US', { minimumFractionDigits: cents ? 2 : 0, maximumFractionDigits: cents ? 2 : 0 }); }
+  // Due dates are calendar days stored at midnight UTC; show them as that day.
+  function day(d) { if (!d) return ''; var x = new Date(d); return isNaN(x) ? '' : x.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }); }
+  function when(d) { if (!d) return ''; var x = new Date(d); return isNaN(x) ? '' : x.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); }
+  function ago(d) { if (!d) return 'never'; var m = Math.round((Date.now() - new Date(d)) / 60000); if (m < 1) return 'just now'; if (m < 60) return m + ' min ago'; var h = Math.round(m / 60); if (h < 48) return h + ' hr ago'; return Math.round(h / 24) + ' days ago'; }
+  function daysUntil(d) { var x = new Date(d); var t = new Date(); var a = Date.UTC(x.getUTCFullYear(), x.getUTCMonth(), x.getUTCDate()); var b = Date.UTC(t.getFullYear(), t.getMonth(), t.getDate()); return Math.round((a - b) / 864e5); }
+  function sec(obj) { return obj && obj.error ? '<p class="err-inline">' + esc(obj.error) + '</p>' : ''; }
+
+  function api(method, path, body) {
+    return fetch(API + path, {
+      method: method,
+      headers: Object.assign({ 'Content-Type': 'application/json' }, token ? { Authorization: 'Bearer ' + token } : {}),
+      body: body ? JSON.stringify(body) : undefined
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (r.status === 401) { signOut('Your sign-in expired. Please sign in again.'); throw new Error('Signed out'); }
+        if (!r.ok || j.success === false) { var e = new Error(j.message || ('Request failed (' + r.status + ')')); e.data = j; throw e; }
+        return j;
+      });
+    });
+  }
+
+  function show(view) { ['loginView', 'crewView', 'appView'].forEach(function (v) { $(v).hidden = v !== view; }); }
+  function signOut(msg) {
+    token = null; try { localStorage.removeItem(KEY); } catch (e) {}
+    show('loginView'); $('loginMsg').textContent = msg || '';
+  }
+
+  // ---------- rendering ----------
+  function renderTiles(d) {
+    var b = d.banks || {}, l = d.loans || {}, bi = d.bills || {}, r = d.receivables || {}, e = d.email || {};
+    var stmtTotal = (b.statements || []).reduce(function (s, a) { return s + (a.ending || 0); }, 0);
+    var cash = (b.accounts && b.accounts.length) ? b.totalBalance : stmtTotal;
+    var waiting = (d.drafts && d.drafts.pending) || 0;
+    var tiles = [
+      { k: 'Cash on hand', v: money(cash), s: (b.accounts && b.accounts.length) ? b.accounts.length + ' accounts' : ((b.statements || []).length ? 'from bank statements' : '') },
+      { k: 'Loans', v: money(l.totalBalance), s: l.dueNext30 ? money(l.dueNext30) + ' due in 30 days' : '' },
+      { k: 'Bills overdue', v: money(bi.overdueTotal, true), s: bi.dueThisWeek ? money(bi.dueThisWeek, true) + ' due this week' : 'nothing due this week', warn: bi.overdueTotal > 0 },
+      { k: 'Owed to you', v: money(r.total), s: (r.count || 0) + ' open invoices' + (r.overdueCount ? ', ' + r.overdueCount + ' late' : ''), warn: r.overdueCount > 0 },
+      { k: 'Emails need you', v: String(e.actionRequired || 0), s: (e.totalUnread || 0) + ' unread' },
+      { k: 'Replies to approve', v: String(waiting), s: waiting ? 'drafted for you below' : 'none waiting', warn: waiting > 0 }
+    ];
+    $('tiles').innerHTML = tiles.map(function (t) {
+      return '<div class="tile' + (t.warn ? ' warn' : '') + '"><div class="k">' + esc(t.k) + '</div><div class="v">' + esc(t.v) + '</div><div class="s">' + esc(t.s) + '</div></div>';
+    }).join('');
+  }
+
+  function entityTag(en) { return en ? '<span class="tag"><span class="dot" style="background:' + esc(/^#[0-9a-f]{3,8}$/i.test(en.color || '') ? en.color : '#999') + '"></span>' + esc(en.name) + '</span>' : ''; }
+
+  function renderNeeds(d) {
+    var e = d.email || {};
+    var drafts = state.drafts;
+    var draftByEmail = {};
+    drafts.forEach(function (x) { if (x.email && x.email.id) draftByEmail[x.email.id] = x; });
+    var html = sec(e);
+    // Drafts first: these are ready to send.
+    drafts.forEach(function (x) {
+      var em = x.email || {};
+      html += '<div class="item" data-draft="' + esc(x.id) + '"><h3>Reply to ' + esc(em.from || '') + ': ' + esc(em.subject || '(no subject)') + '</h3>' +
+        '<div class="sub">' + esc(when(em.receivedAt)) + (x.source === 'assistant' ? ' &middot; drafted by Claude' : '') + (x.reason ? ' &middot; ' + esc(x.reason) : '') + '</div>' +
+        (x.status === 'failed' ? '<p class="err-inline">Last send failed: ' + esc(x.error || 'unknown error') + '</p>' : '') +
+        (em.summary ? '<p>' + esc(em.summary) + '</p>' : '') +
+        '<label for="d-' + esc(x.id) + '">Reply</label><textarea id="d-' + esc(x.id) + '">' + esc(x.body) + '</textarea>' +
+        '<div class="row"><button class="btn small" data-act="send">' + (x.status === 'failed' ? 'Try sending again' : 'Approve and send') + '</button><button class="btn small ghost" data-act="saveDraft">Save edits</button>' +
+        '<button class="btn small ghost" data-act="full" data-email="' + esc(em.id) + '">Show full email</button>' +
+        '<button class="btn small ghost" data-act="discard">Discard</button><button class="btn small ghost" data-act="noreply">No reply needed</button></div>' +
+        '<div class="fullmail" hidden></div><div class="msg"></div></div>';
+    });
+    (e.needsYou || []).filter(function (m) { return !draftByEmail[m.id]; }).forEach(function (m) {
+      html += '<div class="item" data-email="' + esc(m.id) + '"><h3>' + esc(m.from) + ': ' + esc(m.subject || '(no subject)') + '</h3>' +
+        '<div class="sub">' + esc(when(m.receivedAt)) + ' ' + entityTag(m.entity) + (m.priority === 'critical' || m.priority === 'high' ? ' <span class="tag">' + esc(m.priority) + '</span>' : '') + '</div>' +
+        (m.summary ? '<p>' + esc(m.summary) + '</p>' : '') +
+        '<div class="row"><button class="btn small" data-act="write">Write reply</button><button class="btn small ghost" data-act="full" data-email="' + esc(m.id) + '">Show full email</button></div>' +
+        '<div class="fullmail" hidden></div><div class="compose" hidden><label>Reply</label><textarea></textarea><div class="row"><button class="btn small" data-act="createSend">Send</button><button class="btn small ghost" data-act="createDraft">Save as draft</button></div></div><div class="msg"></div></div>';
+    });
+    $('needs').innerHTML = html || '<p class="empty">Nothing needs a reply.</p>';
+  }
+
+  function renderUpcoming(d) {
+    var list = d.upcoming || [];
+    if (!list.length) { $('upcoming').innerHTML = '<p class="empty">Nothing on the books for the next 30 days.</p>'; return; }
+    var LABEL = { bill: 'Bill', loan: 'Loan payment', receivable: 'Money in', todo: 'To-do', work: 'Job' };
+    $('upcoming').innerHTML = '<table><thead><tr><th>Date</th><th>What</th><th class="num">Amount</th></tr></thead><tbody>' + list.map(function (u) {
+      var late = u.date && daysUntil(u.date) < 0;
+      return '<tr><td>' + esc(day(u.date)) + (late ? ' <span class="tag">late</span>' : '') + '</td><td>' + esc(u.label) + ' <span class="tag">' + esc(LABEL[u.kind] || u.kind) + '</span></td>' +
+        '<td class="num ' + (u.amount < 0 ? 'neg' : u.amount > 0 ? 'pos' : '') + '">' + (u.amount != null ? esc(money(u.amount, true)) : '') + '</td></tr>';
+    }).join('') + '</tbody></table>';
+  }
+
+  var STATUS = { staged: 'Staged', in_progress: 'In progress', waiting: 'Waiting', done: 'Done' };
+  function renderTasks(d) {
+    var t = d.tasks || {};
+    $('todos').innerHTML = sec(t) + ((t.todo || []).length ? (t.todo || []).map(function (x) {
+      return '<div class="item check" data-task="' + esc(x.id) + '"><input type="checkbox" data-act="toggle" aria-label="Done"><div style="flex:1"><h3>' + esc(x.title) + (x.proposed ? ' <span class="tag">suggested by Claude</span>' : '') + '</h3>' +
+        '<div class="sub">' + (x.dueDate ? 'Due ' + esc(day(x.dueDate)) + (daysUntil(x.dueDate) < 0 ? ' (late)' : '') : 'No date') + (x.entitySlug ? ' &middot; ' + esc(x.entitySlug) : '') + '</div>' +
+        (x.proposed ? '<div class="row"><button class="btn small" data-act="accept">Keep</button><button class="btn small ghost" data-act="del">Dismiss</button></div>' : '') + '</div></div>';
+    }).join('') : '<p class="empty">List is clear.</p>');
+    $('work').innerHTML = (t.work || []).length ? '<table><thead><tr><th>Job</th><th>Where</th><th>Who</th><th>By</th><th>Status</th><th></th></tr></thead><tbody>' + (t.work || []).map(function (x) {
+      return '<tr data-task="' + esc(x.id) + '"><td>' + esc(x.title) + (x.priority === 'urgent' || x.priority === 'high' ? ' <span class="tag">' + esc(x.priority) + '</span>' : '') + (x.audience === 'private' ? ' <span class="tag">private</span>' : '') + (x.proposed ? ' <span class="tag">suggested</span>' : '') + '</td>' +
+        '<td>' + esc(x.location || '') + '</td><td>' + esc(x.assignedName || '') + '</td><td>' + esc(day(x.dueDate)) + '</td>' +
+        '<td><select data-act="status" aria-label="Status">' + Object.keys(STATUS).map(function (s) { return '<option value="' + s + '"' + (s === x.status ? ' selected' : '') + '>' + STATUS[s] + '</option>'; }).join('') + '</select></td>' +
+        '<td>' + (x.proposed ? '<button class="btn small" data-act="accept">Keep</button> ' : '') + '<button class="btn small ghost" data-act="del">Remove</button></td></tr>';
+    }).join('') + '</tbody></table>' : '<p class="empty">No jobs staged.</p>';
+  }
+
+  function renderPostDrafts() {
+    var drafts = state.posts.filter(function (p) { return p.status === 'draft'; });
+    var recent = state.posts.filter(function (p) { return p.status === 'published'; }).slice(0, 8);
+    var AUD = { crew: 'Crew', public: 'Public', private: 'Just me' };
+    var html = '';
+    if (drafts.length) html += '<h3 style="font-size:1rem;margin:.4rem 0">Drafts</h3>' + drafts.map(function (p) {
+      return '<div class="item" data-post="' + esc(p.id) + '"><h3>' + esc(p.title) + ' <span class="tag">' + esc(AUD[p.audience]) + '</span>' + (p.source === 'assistant' ? ' <span class="tag">drafted by Claude</span>' : '') + '</h3>' +
+        (p.body ? '<p>' + esc(p.body).replace(/\n/g, '<br>') + '</p>' : '') +
+        '<div class="row"><button class="btn small" data-act="publishPost">Publish</button><select data-act="postAud" aria-label="Who sees it">' + Object.keys(AUD).map(function (a) { return '<option value="' + a + '"' + (a === p.audience ? ' selected' : '') + '>' + AUD[a] + '</option>'; }).join('') + '</select><button class="btn small ghost" data-act="delPost">Delete</button></div><div class="msg"></div></div>';
+    }).join('');
+    if (recent.length) html += '<h3 style="font-size:1rem;margin:.8rem 0 .4rem">Recently published</h3>' + recent.map(function (p) {
+      return '<div class="item" data-post="' + esc(p.id) + '"><h3>' + esc(p.title) + ' <span class="tag">' + esc(AUD[p.audience]) + '</span></h3><div class="sub">' + esc(when(p.publishedAt)) + '</div>' +
+        '<div class="row"><button class="btn small ghost" data-act="unpublish">Take down</button><button class="btn small ghost" data-act="delPost">Delete</button></div><div class="msg"></div></div>';
+    }).join('');
+    $('postDrafts').innerHTML = html;
+  }
+
+  function renderMoney(d) {
+    var b = d.banks || {};
+    var h = sec(b);
+    if ((b.accounts || []).length) h += '<table><thead><tr><th>Account</th><th class="num">Balance</th></tr></thead><tbody>' + b.accounts.map(function (a) {
+      return '<tr><td>' + esc(a.name) + '<div class="sub" style="font-size:.8rem;color:var(--muted)">' + esc([a.bank, a.last4 ? 'ending ' + a.last4 : ''].filter(Boolean).join(' · ')) + '</div></td><td class="num">' + esc(money(a.balance, true)) + '</td></tr>';
+    }).join('') + '</tbody></table>';
+    if ((b.statements || []).length) h += '<p class="sub" style="margin:.8rem 0 .3rem;font-size:.85rem;color:var(--muted)">From bank statements on file</p><table><tbody>' + b.statements.map(function (s) {
+      return '<tr><td>' + esc(s.holder) + '<div style="font-size:.8rem;color:var(--muted)">' + esc(s.bank + ' · ending ' + s.last4 + ' · as of ' + day(s.asOf)) + (s.needsReview ? ' · ' + esc(s.needsReview) + ' lines to review' : '') + '</div></td><td class="num">' + esc(money(s.ending, true)) + '</td></tr>';
+    }).join('') + '</tbody></table>';
+    $('banks').innerHTML = h || '<p class="empty">No bank accounts entered in m77ag.</p>';
+
+    var l = d.loans || {};
+    $('loans').innerHTML = sec(l) + ((l.loans || []).length ? '<table><thead><tr><th>Loan</th><th class="num">Balance</th><th class="num">Next payment</th></tr></thead><tbody>' + l.loans.map(function (x) {
+      return '<tr><td>' + esc(x.name) + '<div style="font-size:.8rem;color:var(--muted)">' + esc([x.lender, x.rate != null ? x.rate + '%' : ''].filter(Boolean).join(' · ')) + '</div></td><td class="num">' + esc(money(x.balance)) + '</td><td class="num">' + esc(money(x.payment, true)) + '<div style="font-size:.8rem;color:var(--muted)">' + esc(day(x.nextPaymentDate)) + '</div></td></tr>';
+    }).join('') + '</tbody></table>' : '<p class="empty">No active loans entered in m77ag.</p>');
+
+    var bi = d.bills || {};
+    var bills = (bi.overdue || []).concat(bi.upcoming || []);
+    $('bills').innerHTML = sec(bi) + (bills.length ? '<table><thead><tr><th>Due</th><th>Vendor</th><th class="num">Amount</th></tr></thead><tbody>' + bills.map(function (x) {
+      return '<tr><td>' + esc(day(x.dueDate)) + (x.dueDate && daysUntil(x.dueDate) < 0 ? ' <span class="tag">late</span>' : '') + '</td><td>' + esc(x.vendor) + ' ' + entityTag(x.entity) + '</td><td class="num">' + esc(money(x.amount, true)) + '</td></tr>';
+    }).join('') + '</tbody></table>' : '<p class="empty">No bills due in the next 30 days.</p>');
+
+    var r = d.receivables || {};
+    $('recv').innerHTML = sec(r) + ((r.invoices || []).length ? '<table><thead><tr><th>Due</th><th>Who</th><th class="num">Balance</th></tr></thead><tbody>' + r.invoices.map(function (x) {
+      return '<tr><td>' + esc(day(x.dueDate)) + (x.dueDate && daysUntil(x.dueDate) < 0 ? ' <span class="tag">late</span>' : '') + '</td><td>' + esc(x.customer || '') + ' <span style="color:var(--muted);font-size:.8rem">' + esc(x.number || '') + '</span></td><td class="num">' + esc(money(x.balance, true)) + '</td></tr>';
+    }).join('') + '</tbody></table>' : '<p class="empty">Nothing outstanding.</p>');
+
+    var e = d.email || {};
+    var accts = (e.accounts || []).map(function (a) { return '<tr><td>' + esc(a.email) + '</td><td>' + esc(a.provider) + '</td><td>' + (a.syncEnabled ? 'synced ' + esc(ago(a.lastSyncAt)) : 'sync off') + '</td></tr>'; }).join('');
+    $('mail').innerHTML = sec(e) + ((e.unreadByBusiness || []).length ? '<table><thead><tr><th>Business</th><th class="num">Unread</th></tr></thead><tbody>' + e.unreadByBusiness.map(function (u) { return '<tr><td>' + entityTag(u.entity) + '</td><td class="num">' + esc(u.unread) + '</td></tr>'; }).join('') + '</tbody></table>' : '<p class="empty">No unread mail.</p>') +
+      (accts ? '<p style="margin:.8rem 0 .3rem;font-size:.85rem;color:var(--muted)">Connected mailboxes</p><table><tbody>' + accts + '</tbody></table>' : '<p class="empty">No mailboxes connected. Connect them in Mail Center.</p>');
+  }
+
+  function render() {
+    var d = state.today;
+    $('stamp').textContent = 'Updated ' + when(d.generatedAt);
+    renderTiles(d); renderNeeds(d); renderUpcoming(d); renderTasks(d); renderPostDrafts(); renderMoney(d);
+  }
+
+  function load() {
+    return Promise.all([api('GET', '/api/life/today'), api('GET', '/api/life/drafts'), api('GET', '/api/life/posts')]).then(function (r) {
+      state.today = r[0].data; state.drafts = r[1].data || []; state.posts = r[2].data || [];
+      show('appView'); render();
+    });
+  }
+
+  function start() {
+    if (!token) return signOut();
+    api('GET', '/api/life/me').then(function (j) {
+      if (j.data.view === 'command') return load();
+      if (j.data.view === 'briefing') return show('crewView');
+      signOut('This login does not have access to the Command Center.');
+    }).catch(function (e) { if (e.message !== 'Signed out') signOut(e.message); });
+  }
+
+  // ---------- actions ----------
+  function setMsg(el, text, kind) { if (!el) return; el.className = 'msg' + (kind ? ' ' + kind : ''); el.textContent = text || ''; }
+  function busy(btn, on) { if (btn) btn.disabled = on; }
+
+  document.addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-act]');
+    if (!b || b.tagName === 'SELECT' || (b.tagName === 'INPUT' && b.type !== 'checkbox' && b.type !== 'submit')) return;
+    var act = b.getAttribute('data-act');
+    var item = b.closest('[data-draft],[data-email],[data-task],[data-post]');
+    var msg = item && item.querySelector('.msg');
+    if (act === 'logout') return signOut();
+    if (act === 'refresh') { busy(b, true); return load().catch(function (e) { alert(e.message); }).then(function () { busy(b, false); }); }
+
+    if (act === 'full') {
+      var box = item.querySelector('.fullmail');
+      if (!box.hidden) { box.hidden = true; return; }
+      busy(b, true); box.hidden = false; box.textContent = 'Loading...';
+      return api('GET', '/api/life/emails/' + encodeURIComponent(b.getAttribute('data-email')) + '/full')
+        .then(function (j) { box.textContent = j.data.body || '(empty)'; })
+        .catch(function (e) { box.textContent = e.message; }).then(function () { busy(b, false); });
+    }
+    if (act === 'write') { item.querySelector('.compose').hidden = false; item.querySelector('.compose textarea').focus(); return; }
+
+    var did = item && item.getAttribute('data-draft');
+    if (act === 'send') {
+      var body = item.querySelector('textarea').value.trim();
+      if (!body) return setMsg(msg, 'The reply is empty.', 'err');
+      if (!confirm('Send this reply now?')) return;
+      busy(b, true); setMsg(msg, 'Sending...');
+      return api('POST', '/api/life/drafts/' + did + '/send', { body: body }).then(function () { setMsg(msg, 'Sent.', 'ok'); return load(); })
+        .catch(function (e) { setMsg(msg, e.message, 'err'); busy(b, false); });
+    }
+    if (act === 'saveDraft') {
+      busy(b, true);
+      return api('PATCH', '/api/life/drafts/' + did, { body: item.querySelector('textarea').value }).then(function () { setMsg(msg, 'Saved.', 'ok'); })
+        .catch(function (e) { setMsg(msg, e.message, 'err'); }).then(function () { busy(b, false); });
+    }
+    if (act === 'discard' || act === 'noreply') {
+      busy(b, true);
+      return api('POST', '/api/life/drafts/' + did + '/discard', { noReplyNeeded: act === 'noreply' }).then(load).catch(function (e) { setMsg(msg, e.message, 'err'); busy(b, false); });
+    }
+    if (act === 'createDraft' || act === 'createSend') {
+      var eid = item.getAttribute('data-email');
+      var text = item.querySelector('.compose textarea').value.trim();
+      if (!text) return setMsg(msg, 'The reply is empty.', 'err');
+      if (act === 'createSend' && !confirm('Send this reply now?')) return;
+      busy(b, true);
+      return api('POST', '/api/life/drafts', { emailId: eid, body: text }).then(function (j) {
+        if (act === 'createSend') return api('POST', '/api/life/drafts/' + j.data.id + '/send', {});
+      }).then(load).catch(function (e) { setMsg(msg, e.message, 'err'); busy(b, false); load(); });
+    }
+
+    var tid = item && item.getAttribute('data-task');
+    if (act === 'toggle') { b.disabled = true; return api('PATCH', '/api/life/tasks/' + tid, { status: 'done' }).then(load).catch(function (e) { alert(e.message); b.disabled = false; b.checked = false; }); }
+    if (act === 'accept') { busy(b, true); return api('PATCH', '/api/life/tasks/' + tid, { proposed: false }).then(load).catch(function (e) { alert(e.message); busy(b, false); }); }
+    if (act === 'del') { if (!confirm('Remove this?')) return; busy(b, true); return api('DELETE', '/api/life/tasks/' + tid).then(load).catch(function (e) { alert(e.message); busy(b, false); }); }
+
+    var pid = item && item.getAttribute('data-post');
+    function siteNote(j) { return j && j.site ? (j.site.published ? ' kylemcconnell.com updated.' : ' kylemcconnell.com not updated: ' + j.site.reason) : ''; }
+    if (act === 'publishPost') {
+      var aud = item.querySelector('select').value;
+      busy(b, true);
+      return api('PATCH', '/api/life/posts/' + pid, { status: 'published', audience: aud }).then(function (j) { alert('Published.' + siteNote(j)); return load(); })
+        .catch(function (e) { setMsg(msg, e.message, 'err'); busy(b, false); });
+    }
+    if (act === 'unpublish') { busy(b, true); return api('PATCH', '/api/life/posts/' + pid, { status: 'draft' }).then(function (j) { if (j.site && !j.site.published) alert(siteNote(j)); return load(); }).catch(function (e) { setMsg(msg, e.message, 'err'); busy(b, false); }); }
+    if (act === 'delPost') { if (!confirm('Delete this post?')) return; busy(b, true); return api('DELETE', '/api/life/posts/' + pid).then(load).catch(function (e) { setMsg(msg, e.message, 'err'); busy(b, false); }); }
+  });
+
+  document.addEventListener('change', function (ev) {
+    var s = ev.target;
+    if (s.getAttribute('data-act') !== 'status') return;
+    var tid = s.closest('[data-task]').getAttribute('data-task');
+    s.disabled = true;
+    api('PATCH', '/api/life/tasks/' + tid, { status: s.value }).then(load).catch(function (e) { alert(e.message); s.disabled = false; });
+  });
+
+  $('loginForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    setMsg($('loginMsg'), '', 'err');
+    fetch(API + '/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: $('email').value.trim(), password: $('password').value }) })
+      .then(function (r) { return r.json().catch(function () { return {}; }); })
+      .then(function (j) {
+        if (!j.token) throw new Error(j.message || 'Sign-in failed');
+        token = j.token; try { localStorage.setItem(KEY, token); } catch (e) {}
+        $('password').value = '';
+        start();
+      })
+      .catch(function (e) { setMsg($('loginMsg'), e.message === 'Failed to fetch' ? 'Could not reach m77ag.com.' : e.message, 'err'); });
+  });
+
+  $('todoForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    api('POST', '/api/life/tasks', { kind: 'todo', title: $('todoTitle').value, dueDate: $('todoDue').value || null })
+      .then(function () { ev.target.reset(); return load(); }).catch(function (e) { alert(e.message); });
+  });
+
+  $('workForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var m = $('workMsg');
+    api('POST', '/api/life/tasks', { kind: 'work', title: $('wTitle').value, location: $('wLoc').value, assignedName: $('wWho').value, notes: $('wNotes').value, priority: $('wPri').value, dueDate: $('wDue').value || null, audience: $('wCrew').checked ? 'crew' : 'private' })
+      .then(function () { ev.target.reset(); $('wCrew').checked = true; setMsg(m, 'Staged.', 'ok'); return load(); })
+      .catch(function (e) { setMsg(m, e.message, 'err'); });
+  });
+
+  var postStatus = 'published';
+  $('postForm').addEventListener('click', function (ev) { var b = ev.target.closest('button[data-status]'); if (b) postStatus = b.getAttribute('data-status'); });
+  $('postForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var m = $('postMsg');
+    var aud = $('pAud').value;
+    if (postStatus === 'published' && aud === 'public' && !confirm('Publish this to kylemcconnell.com for anyone to see?')) return;
+    api('POST', '/api/life/posts', { title: $('pTitle').value, body: $('pBody').value, link: $('pLink').value, category: $('pCat').value, audience: aud, status: postStatus })
+      .then(function (j) {
+        ev.target.reset();
+        setMsg(m, (postStatus === 'published' ? 'Published.' : 'Draft saved.') + siteText(j), j.site && !j.site.published ? 'err' : 'ok');
+        return load();
+      }).catch(function (e) { setMsg(m, e.message, 'err'); });
+  });
+  function siteText(j) { return j && j.site ? (j.site.published ? ' kylemcconnell.com updated.' : ' kylemcconnell.com not updated: ' + j.site.reason) : ''; }
+
+  start();
+})();
+</script>
+</body>
+</html>
