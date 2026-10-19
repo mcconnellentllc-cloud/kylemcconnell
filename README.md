@@ -40,6 +40,8 @@ m77ag.com is the engine; this site is the front door.
   from search (`robots.txt`, `noindex`). m77ag must list `https://kylemcconnell.com`
   and `https://www.kylemcconnell.com` in its `CORS_ORIGINS` setting in Render.
   Crew logins (employee/farmer) are sent to the crew briefing at m77ag.com/briefing.
+- **Hidden entrance.** The © in the home page footer links to `/life/`, styled to
+  read as plain text (`a.quiet` in `styles.css`). No visible link anywhere else.
 - `tools/build-cards.mjs` refreshes the tabs and footer on `updates/index.html` and
   leaves its update list alone.
 
