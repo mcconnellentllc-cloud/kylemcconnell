@@ -75,6 +75,19 @@
   .jstatus.new { color: var(--muted); } .jstatus.working { color: var(--amber); } .jstatus.done { color: var(--green); } .jstatus.needs_you { color: var(--crimson); }
   .reply { margin-top: .45rem; padding: .55rem .7rem; border-left: 3px solid var(--gold); background: var(--surface-2); border-radius: 0 var(--radius) var(--radius) 0; font-size: .92rem; white-space: pre-wrap; }
   .actions-list { margin: .35rem 0 0; padding-left: 1.1rem; font-size: .88rem; color: var(--muted); }
+  .pri { display: inline-block; min-width: 4.6rem; text-align: center; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: .1rem .4rem; border-radius: 999px; border: 1px solid var(--border-strong); color: var(--muted); }
+  .pri.critical { color: #fff; background: var(--crimson); border-color: var(--crimson); }
+  .pri.high { color: var(--crimson); border-color: var(--crimson); }
+  .pri.medium { color: var(--text); }
+  .where { font-size: .8rem; color: var(--muted); word-break: break-all; }
+  td.c-critical { color: var(--crimson); font-weight: 700; }
+  td.c-high { font-weight: 700; }
+  .glance-row td { cursor: pointer; }
+  .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  @media (max-width: 40rem) {
+    #glanceBoxes th, #glanceBoxes td { padding: .4rem .25rem; font-size: .82rem; }
+    #glanceBoxes .hide-sm, #glanceList .hide-sm { display: none; }
+  }
   [hidden] { display: none !important; }
 </style>
 </head>
@@ -124,6 +137,16 @@
         <div class="msg" id="jMsg"></div>
       </form>
       <div id="journal" style="margin-top:.6rem"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Mail at a glance</h2>
+      <div id="glanceBoxes"></div>
+      <div class="row" style="margin:.8rem 0 .4rem">
+        <select id="glanceFilter" aria-label="Show"><option value="all">All open mail</option><option value="urgent">Critical and high only</option><option value="reply">Needs a reply</option></select>
+        <select id="glanceBox" aria-label="Mailbox"><option value="">Every mailbox</option></select>
+      </div>
+      <div id="glanceList"></div>
     </section>
 
     <section class="panel">
@@ -290,21 +313,22 @@
     drafts.forEach(function (x) {
       var em = x.email || {};
       html += '<div class="item" data-draft="' + esc(x.id) + '"><h3>Reply to ' + esc(em.from || '') + ': ' + esc(em.subject || '(no subject)') + '</h3>' +
-        '<div class="sub">' + esc(when(em.receivedAt)) + (x.source === 'assistant' ? ' &middot; drafted by Claude' : '') + (x.reason ? ' &middot; ' + esc(x.reason) : '') + '</div>' +
+        '<div class="sub">' + (em.where ? 'In ' + esc(em.where) + ' &middot; ' : '') + esc(when(em.receivedAt)) + (x.source === 'assistant' ? ' &middot; drafted by Claude' : '') + (x.reason ? ' &middot; ' + esc(x.reason) : '') + '</div>' +
+        (em.receiveOnly ? '<p class="err-inline" style="color:var(--amber)">Forwarded mail: reply from ' + esc(em.replyFrom || 'the original account') + ' yourself. Copy the draft below.</p>' : '') +
         (x.status === 'failed' ? '<p class="err-inline">Last send failed: ' + esc(x.error || 'unknown error') + '</p>' : '') +
         (em.summary ? '<p>' + esc(em.summary) + '</p>' : '') +
         '<label for="d-' + esc(x.id) + '">Reply</label><textarea id="d-' + esc(x.id) + '">' + esc(x.body) + '</textarea>' +
-        '<div class="row"><button class="btn small" data-act="send">' + (x.status === 'failed' ? 'Try sending again' : 'Approve and send') + '</button><button class="btn small ghost" data-act="saveDraft">Save edits</button>' +
+        '<div class="row">' + (em.receiveOnly ? '<button class="btn small" data-act="copy">Copy reply</button>' : '<button class="btn small" data-act="send">' + (x.status === 'failed' ? 'Try sending again' : 'Approve and send') + '</button>') + '<button class="btn small ghost" data-act="saveDraft">Save edits</button>' +
         '<button class="btn small ghost" data-act="full" data-email="' + esc(em.id) + '">Show full email</button>' +
         '<button class="btn small ghost" data-act="discard">Discard</button><button class="btn small ghost" data-act="noreply">No reply needed</button></div>' +
         '<div class="fullmail" hidden></div><div class="msg"></div></div>';
     });
     (e.needsYou || []).filter(function (m) { return !draftByEmail[m.id]; }).forEach(function (m) {
       html += '<div class="item" data-email="' + esc(m.id) + '"><h3>' + esc(m.from) + ': ' + esc(m.subject || '(no subject)') + '</h3>' +
-        '<div class="sub">' + esc(when(m.receivedAt)) + ' ' + entityTag(m.entity) + (m.priority === 'critical' || m.priority === 'high' ? ' <span class="tag">' + esc(m.priority) + '</span>' : '') + '</div>' +
+        '<div class="sub">' + (m.where ? 'In ' + esc(m.where) + ' &middot; ' : '') + esc(when(m.receivedAt)) + ' ' + entityTag(m.entity) + (m.priority === 'critical' || m.priority === 'high' ? ' <span class="tag">' + esc(m.priority) + '</span>' : '') + '</div>' +
         (m.summary ? '<p>' + esc(m.summary) + '</p>' : '') +
         '<div class="row"><button class="btn small" data-act="write">Write reply</button><button class="btn small ghost" data-act="full" data-email="' + esc(m.id) + '">Show full email</button></div>' +
-        '<div class="fullmail" hidden></div><div class="compose" hidden><label>Reply</label><textarea></textarea><div class="row"><button class="btn small" data-act="createSend">Send</button><button class="btn small ghost" data-act="createDraft">Save as draft</button></div></div><div class="msg"></div></div>';
+        '<div class="fullmail" hidden></div><div class="compose" hidden><label>Reply</label><textarea></textarea><div class="row">' + (m.receiveOnly ? '<span class="err-inline" style="color:var(--amber)">Forwarded: reply from ' + esc(m.replyFrom || 'the original account') + '.</span>' : '<button class="btn small" data-act="createSend">Send</button>') + '<button class="btn small ghost" data-act="createDraft">Save as draft</button></div></div><div class="msg"></div></div>';
     });
     $('needs').innerHTML = html || '<p class="empty">Nothing needs a reply.</p>';
   }
@@ -328,12 +352,12 @@
         '<div class="sub">' + (x.dueDate ? 'Due ' + esc(day(x.dueDate)) + (daysUntil(x.dueDate) < 0 ? ' (late)' : '') : 'No date') + (x.entitySlug ? ' &middot; ' + esc(x.entitySlug) : '') + '</div>' +
         (x.proposed ? '<div class="row"><button class="btn small" data-act="accept">Keep</button><button class="btn small ghost" data-act="del">Dismiss</button></div>' : '') + '</div></div>';
     }).join('') : '<p class="empty">List is clear.</p>');
-    $('work').innerHTML = (t.work || []).length ? '<table><thead><tr><th>Job</th><th>Where</th><th>Who</th><th>By</th><th>Status</th><th></th></tr></thead><tbody>' + (t.work || []).map(function (x) {
+    $('work').innerHTML = (t.work || []).length ? '<div class="tw"><table><thead><tr><th>Job</th><th>Where</th><th>Who</th><th>By</th><th>Status</th><th></th></tr></thead><tbody>' + (t.work || []).map(function (x) {
       return '<tr data-task="' + esc(x.id) + '"><td>' + esc(x.title) + (x.priority === 'urgent' || x.priority === 'high' ? ' <span class="tag">' + esc(x.priority) + '</span>' : '') + (x.audience === 'private' ? ' <span class="tag">private</span>' : '') + (x.proposed ? ' <span class="tag">suggested</span>' : '') + '</td>' +
         '<td>' + esc(x.location || '') + '</td><td>' + esc(x.assignedName || '') + '</td><td>' + esc(day(x.dueDate)) + '</td>' +
         '<td><select data-act="status" aria-label="Status">' + Object.keys(STATUS).map(function (s) { return '<option value="' + s + '"' + (s === x.status ? ' selected' : '') + '>' + STATUS[s] + '</option>'; }).join('') + '</select></td>' +
         '<td>' + (x.proposed ? '<button class="btn small" data-act="accept">Keep</button> ' : '') + '<button class="btn small ghost" data-act="del">Remove</button></td></tr>';
-    }).join('') + '</tbody></table>' : '<p class="empty">No jobs staged.</p>';
+    }).join('') + '</tbody></table></div>' : '<p class="empty">No jobs staged.</p>';
   }
 
   function renderPostDrafts() {
@@ -402,9 +426,35 @@
     }).join('') : '<p class="empty">Nothing yet. Write what needs done above.</p>';
   }
 
+  var PRI_LABEL = { critical: 'Critical', high: 'High', medium: 'Medium', low: 'Low' };
+  function renderGlance(d) {
+    var e = d.email || {};
+    var boxes = e.byMailbox || [];
+    var sel = $('glanceBox'), cur = sel.value;
+    sel.innerHTML = '<option value="">Every mailbox</option>' + boxes.map(function (b) { return '<option value="' + esc(b.mailbox) + '"' + (b.mailbox === cur ? ' selected' : '') + '>' + esc(b.mailbox) + '</option>'; }).join('');
+    $('glanceBoxes').innerHTML = sec(e) + (boxes.length ? '<div class="tw"><table><thead><tr><th>Mailbox</th><th class="num">Critical</th><th class="num">High</th><th class="num hide-sm">Medium</th><th class="num hide-sm">Low</th><th class="num">Reply</th></tr></thead><tbody>' + boxes.map(function (b) {
+      return '<tr class="glance-row" data-box="' + esc(b.mailbox) + '"><td><span class="where" style="color:var(--text)">' + esc(b.mailbox) + '</span>' + (b.forwarded ? ' <span class="tag">forwarded</span>' : '') + '</td>' +
+        '<td class="num' + (b.critical ? ' c-critical' : '') + '">' + b.critical + '</td><td class="num' + (b.high ? ' c-high' : '') + '">' + b.high + '</td><td class="num hide-sm">' + b.medium + '</td><td class="num hide-sm">' + b.low + '</td><td class="num">' + b.needsReply + '</td></tr>';
+    }).join('') + '</tbody></table></div>' : '<p class="empty">No mailboxes connected yet. Connect them in Mail Center.</p>');
+    var f = $('glanceFilter').value, box = sel.value;
+    var list = (e.glance || []).filter(function (m) {
+      if (box && m.where !== box) return false;
+      if (f === 'urgent') return m.priority === 'critical' || m.priority === 'high';
+      if (f === 'reply') return m.needsReply;
+      return true;
+    });
+    $('glanceList').innerHTML = list.length ? '<div class="tw"><table><thead><tr><th>Priority</th><th>Email</th><th>Where</th><th class="hide-sm">Received</th></tr></thead><tbody>' + list.map(function (m) {
+      return '<tr><td><span class="pri ' + esc(m.priority) + '">' + esc(PRI_LABEL[m.priority] || m.priority) + '</span></td>' +
+        '<td><strong style="font-weight:' + (m.unread ? '700' : '500') + '">' + esc(m.from) + '</strong>: ' + esc(m.subject || '(no subject)') + (m.needsReply ? ' <span class="tag">reply</span>' : '') +
+        (m.summary ? '<div style="font-size:.82rem;color:var(--muted)">' + esc(m.summary) + '</div>' : '') + '</td>' +
+        '<td class="where">' + esc(m.where) + '</td><td class="hide-sm" style="white-space:nowrap;font-size:.85rem">' + esc(when(m.receivedAt)) + '</td></tr>';
+    }).join('') + '</tbody></table></div>' : (boxes.length ? '<p class="empty">Nothing open here.</p>' : '');
+  }
+
   function render() {
     var d = state.today;
     renderJournal();
+    renderGlance(d);
     $('stamp').textContent = 'Updated ' + when(d.generatedAt);
     renderTiles(d); renderNeeds(d); renderUpcoming(d); renderTasks(d); renderPostDrafts(); renderMoney(d);
   }
@@ -474,6 +524,13 @@
       return api('POST', '/api/life/drafts/' + did + '/send', { body: body }).then(function () { setMsg(msg, 'Sent.', 'ok'); return load(); })
         .catch(function (e) { setMsg(msg, e.message, 'err'); busy(b, false); });
     }
+    if (act === 'copy') {
+      var txt = item.querySelector('textarea').value;
+      var done = function () { setMsg(msg, 'Copied. Paste it into your reply from the original account.', 'ok'); };
+      if (navigator.clipboard) navigator.clipboard.writeText(txt).then(done, function () { item.querySelector('textarea').select(); setMsg(msg, 'Select-all is on; copy it now.', 'ok'); });
+      else { item.querySelector('textarea').select(); document.execCommand('copy'); done(); }
+      return;
+    }
     if (act === 'saveDraft') {
       busy(b, true);
       return api('PATCH', '/api/life/drafts/' + did, { body: item.querySelector('textarea').value }).then(function () { setMsg(msg, 'Saved.', 'ok'); })
@@ -531,6 +588,13 @@
         start();
       })
       .catch(function (e) { setMsg($('loginMsg'), e.message === 'Failed to fetch' ? 'Could not reach m77ag.com.' : e.message, 'err'); });
+  });
+
+  $('glanceFilter').addEventListener('change', function () { if (state.today) renderGlance(state.today); });
+  $('glanceBox').addEventListener('change', function () { if (state.today) renderGlance(state.today); });
+  $('glanceBoxes').addEventListener('click', function (ev) {
+    var r = ev.target.closest('[data-box]'); if (!r) return;
+    $('glanceBox').value = r.getAttribute('data-box'); renderGlance(state.today);
   });
 
   $('journalForm').addEventListener('submit', function (ev) {
