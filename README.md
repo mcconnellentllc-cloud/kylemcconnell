@@ -221,3 +221,9 @@ amber, family plum, personal navy. The generator puts a `sec-<slug>` class on ev
 group heading, list and card, and the CSS reads `--sec` from it, so a card, its
 heading, its links and its page header all pick up the right color with no per-section
 rules. All ten accents (five sections, two themes) clear WCAG AA.
+
+## Planning
+
+Plans and the backlog for `/life/` are kept in the private m77ag repository, in
+`docs/life-hub/GOALS.md`. Planning discussion happens in Kyle's claude.ai
+Project.
